@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "485873590510",
+    "project_id": "genghealth-b0ff6",
+    "storage_bucket": "genghealth-b0ff6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:485873590510:android:2a96f2efff86a3b3dd93ff",
+        "android_client_info": {
+          "package_name": "com.example.geng_health"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgW0feixjo01p9aM7La6L61Wd1dwWrs5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
