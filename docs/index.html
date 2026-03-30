@@ -14,8 +14,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
     
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.395.0/dist/umd/lucide.min.js" defer></script>
 </head>
 <body>
 
@@ -48,17 +48,17 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="feature-card" data-aos="fade-up">
-            <i data-lucid="bar-chart-3"></i>
+            <i data-lucide="bar-chart-3"></i>
             <h3>Usage Analytics</h3>
             <p>Get detailed insights into your daily and weekly screen time across all your favorite applications.</p>
         </div>
         <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-            <i data-lucid="star"></i>
+            <i data-lucide="star"></i>
             <h3>Points Engine</h3>
             <p>Earn points every hour you stay within your healthy usage limits. Consistency is the key to big rewards.</p>
         </div>
         <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-            <i data-lucid="gift"></i>
+            <i data-lucide="gift"></i>
             <h3>Real Rewards</h3>
             <p>Redeem your points for Amazon, Google Play, and other premium gift cards instantly through the app.</p>
         </div>
@@ -107,22 +107,24 @@
     <section id="download" style="padding: 10rem 10%; text-align: center; background: radial-gradient(circle at center, var(--dark-light), var(--dark));">
         <h2 class="section-title">Start Your Wellness Journey Today</h2>
         <p style="color: var(--text-muted); font-size: 1.25rem; margin-bottom: 3rem; max-width: 600px; margin-inline: auto;">Join thousands of users who are taking back control of their time and getting paid for it.</p>
-        <a href="#" class="btn-cta" style="font-size: 1.25rem; padding: 1rem 3rem;">Download for Android</a>
+        <a href="app-release.apk" download class="btn-cta" style="font-size: 1.25rem; padding: 1rem 3rem;">Download for Android</a>
     </section>
 
     <!-- Footer -->
     <footer>
         <p>&copy; 2026 GenGhealth. All rights reserved.</p>
         <div class="social-links">
-            <a href="#"><i data-lucid="twitter"></i></a>
-            <a href="#"><i data-lucid="instagram"></i></a>
-            <a href="#"><i data-lucid="github"></i></a>
+            <a href="#"><i data-lucide="twitter"></i></a>
+            <a href="#"><i data-lucide="instagram"></i></a>
+            <a href="#"><i data-lucide="github"></i></a>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script>
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
     </script>
     <script src="main.js"></script>
 </body>
