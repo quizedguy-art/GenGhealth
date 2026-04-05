@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.geng_health"
+    namespace = "com.quizedguy.genghealth"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.geng_health"
+        applicationId = "com.quizedguy.genghealth"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -51,12 +51,15 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
