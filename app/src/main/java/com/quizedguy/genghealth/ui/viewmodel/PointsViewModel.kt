@@ -10,6 +10,8 @@ import com.google.firebase.firestore.Query
 import java.time.LocalDate
 import com.quizedguy.genghealth.data.UsageStatsHelper
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.PropertyName
+import com.google.firebase.firestore.Exclude
 
 class PointsViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
@@ -80,7 +82,12 @@ class PointsViewModel : ViewModel() {
                 val usageRef = db.collection("daily_usage").document(docId)
                 
                 usageRef.get().addOnSuccessListener { snapshot ->
-                    val isAlreadyCollected = snapshot.getBoolean("isCollected") ?: false
+                    // Check if document exists and is already collected
+                    val isAlreadyCollected = if (snapshot.exists()) {
+                        snapshot.getBoolean("isCollected") ?: false
+                    } else {
+                        false
+                    }
                     
                     if (isAlreadyCollected) {
                         // Keep isCollected as true, only update usage data
@@ -89,7 +96,7 @@ class PointsViewModel : ViewModel() {
                             "pointsPotential", pointsPotential
                         )
                     } else {
-                        // Full merge, setting isCollected to false
+                        // Full merge, ensuring isCollected remains false or is created as false
                         val record = hashMapOf(
                             "userId" to userId,
                             "date" to dateStr,
@@ -221,11 +228,13 @@ data class WithdrawalRequest(
 )
 
 data class DailyUsageRecord(
+    @get:Exclude
     val id: String = "",
     val userId: String = "",
     val date: String = "",
     val totalMillis: Long = 0,
     val pointsPotential: Int = 0,
-    @get:JvmName("isCollected")
-    val isCollected: Boolean = false
+    @get:PropertyName("isCollected")
+    @set:PropertyName("isCollected")
+    var isCollected: Boolean = false
 )

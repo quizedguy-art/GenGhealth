@@ -157,7 +157,10 @@ class AuthViewModel : ViewModel() {
                     
                     // 1. Reward new user (500 pts)
                     val newUserRef = db.collection("users").document(newUserId)
-                    batch.update(newUserRef, "points", 500, "referredBy", referrerId)
+                    batch.update(newUserRef, 
+                        "points", com.google.firebase.firestore.FieldValue.increment(500), 
+                        "referredBy", referrerId
+                    )
                     
                     // 2. Reward referrer (500 pts)
                     val referrerRef = db.collection("users").document(referrerId)

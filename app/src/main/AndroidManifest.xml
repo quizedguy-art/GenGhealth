@@ -16,6 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/app_logo"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/Theme.Geng_health">
         <activity
             android:name=".MainActivity"

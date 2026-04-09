@@ -13,3 +13,18 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Next.js / Admin Panel
+admin-panel/node_modules/
+admin-panel/.next/
+admin-panel/out/
+admin-panel/build/
+
+# Node modules in general
+node_modules/
+
+# Android build outputs (except the ones we want to keep in docs)
+app/build/
+*.apk
+!docs/*.apk
+!admin-panel/public/*.apk

@@ -127,11 +127,12 @@ fun ReferralScreen(
                                     val sendIntent: Intent = Intent().apply {
                                         action = Intent.ACTION_SEND
                                         val shareMessage = """
-                                            Hey! I'm using GenGhealth to earn rewards for healthy screen time habits.
+                                            🌟 Join me on GenGhealth! 🌟
                                             
-                                            Join me and use my referral code: $it
+                                            I'm earning real rewards just by managing my screen time. It's awesome!
                                             
-                                            We'll both get 500 bonus points! 🎁
+                                            Use my code to get 500 bonus points immediately:
+                                            👉 $it 👈
                                             
                                             Download the app here:
                                             https://quizedguy-art.github.io/GenGhealth/

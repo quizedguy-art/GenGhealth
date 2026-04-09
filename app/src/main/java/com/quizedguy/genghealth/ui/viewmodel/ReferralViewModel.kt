@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.PropertyName
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -30,7 +32,10 @@ class ReferralViewModel : ViewModel() {
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
                 _isLoading.value = false
-                if (e != null) return@addSnapshotListener
+                if (e != null) {
+                    Log.e("ReferralViewModel", "Error loading referrals (check indexes): ${e.message}")
+                    return@addSnapshotListener
+                }
                 
                 if (snapshot != null) {
                     val list = snapshot.documents.mapNotNull { doc ->
@@ -43,8 +48,19 @@ class ReferralViewModel : ViewModel() {
 }
 
 data class ReferralRecord(
-    val referredName: String = "",
-    val referredEmail: String = "",
-    val pointsAwarded: Int = 0,
-    val timestamp: Long = 0
+    @get:PropertyName("referredName")
+    @set:PropertyName("referredName")
+    var referredName: String = "",
+    
+    @get:PropertyName("referredEmail")
+    @set:PropertyName("referredEmail")
+    var referredEmail: String = "",
+    
+    @get:PropertyName("pointsAwarded")
+    @set:PropertyName("pointsAwarded")
+    var pointsAwarded: Int = 0,
+    
+    @get:PropertyName("timestamp")
+    @set:PropertyName("timestamp")
+    var timestamp: Long = 0
 )

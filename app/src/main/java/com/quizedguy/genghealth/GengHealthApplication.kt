@@ -19,17 +19,17 @@ class GengHealthApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // Initialize the App Open Ad Manager.
+        appOpenAdManager = AppOpenAdManager(this)
+
         // Initialize the Google Mobile Ads SDK.
         MobileAds.initialize(this) { initializationStatus ->
             Log.d("GengHealthApp", "Mobile Ads SDK initialized status: $initializationStatus")
+            
+            // Initial ad fetches only after SDK is ready
+            appOpenAdManager.fetchAd()
+            RewardedAdManager.loadAd(this)
         }
-
-        // Initialize the App Open Ad Manager.
-        appOpenAdManager = AppOpenAdManager(this)
-        
-        // Initial ad fetches
-        appOpenAdManager.fetchAd()
-        RewardedAdManager.loadAd(this)
 
         // Schedule Workers
         scheduleBackgroundWorkers()

@@ -72,7 +72,6 @@ object RewardedAdManager {
         RewardedAd.load(context, currentAdUnitId, adRequest, object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.e(TAG, "Ad failed to load: ${adError.message} (Code: ${adError.code})")
-                Toast.makeText(context, "RewAd Load Failed (Code ${adError.code}): ${adError.message}", Toast.LENGTH_SHORT).show()
                 rewardedAd = null
                 isLoading = false
                 _isAdLoaded.value = false
@@ -105,7 +104,6 @@ object RewardedAdManager {
  
                     override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
                         Log.e(TAG, "Ad failed to show: ${adError.message}")
-                        Toast.makeText(context, "RewAd Show Failed: ${adError.message}", Toast.LENGTH_SHORT).show()
                         rewardedAd = null
                         _isAdLoaded.value = false
                         loadAd(context) // Preload next

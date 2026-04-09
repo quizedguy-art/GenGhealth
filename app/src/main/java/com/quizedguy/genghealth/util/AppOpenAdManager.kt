@@ -73,7 +73,6 @@ class AppOpenAdManager(private val myApplication: GengHealthApplication) :
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     isLoadingAd = false
                     Log.e(TAG, "Ad failed to load: ${loadAdError.message} (Code: ${loadAdError.code})")
-                    Toast.makeText(myApplication, "AppOpen Load Failed (Code ${loadAdError.code}): ${loadAdError.message}", Toast.LENGTH_SHORT).show()
                     
                     // Exponential backoff retry
                     val delayMillis = Math.min(Math.pow(2.0, retryAttempt.toDouble()).toLong() * 1000, 64000L)
@@ -130,7 +129,6 @@ class AppOpenAdManager(private val myApplication: GengHealthApplication) :
                 appOpenAd = null
                 isShowingAd = false
                 Log.e(TAG, "Ad failed to show: ${adError.message}")
-                Toast.makeText(myApplication, "AppOpen Show Failed: ${adError.message}", Toast.LENGTH_SHORT).show()
                 fetchAd()
             }
 
