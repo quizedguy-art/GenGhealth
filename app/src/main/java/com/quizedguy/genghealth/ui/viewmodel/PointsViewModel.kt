@@ -77,16 +77,29 @@ class PointsViewModel : ViewModel() {
             val pointsPotential = calculatePoints(usageMillis)
 
             if (pointsPotential > 0 || i == 0) { // Always sync today, or any day with points
-                val record = hashMapOf(
-                    "userId" to userId,
-                    "date" to dateStr,
-                    "totalMillis" to usageMillis,
-                    "pointsPotential" to pointsPotential,
-                    "isCollected" to false
-                )
+                val usageRef = db.collection("daily_usage").document(docId)
                 
-                db.collection("daily_usage").document(docId)
-                    .set(record, SetOptions.merge())
+                usageRef.get().addOnSuccessListener { snapshot ->
+                    val isAlreadyCollected = snapshot.getBoolean("isCollected") ?: false
+                    
+                    if (isAlreadyCollected) {
+                        // Keep isCollected as true, only update usage data
+                        usageRef.update(
+                            "totalMillis", usageMillis,
+                            "pointsPotential", pointsPotential
+                        )
+                    } else {
+                        // Full merge, setting isCollected to false
+                        val record = hashMapOf(
+                            "userId" to userId,
+                            "date" to dateStr,
+                            "totalMillis" to usageMillis,
+                            "pointsPotential" to pointsPotential,
+                            "isCollected" to false
+                        )
+                        usageRef.set(record, SetOptions.merge())
+                    }
+                }
             }
         }
     }

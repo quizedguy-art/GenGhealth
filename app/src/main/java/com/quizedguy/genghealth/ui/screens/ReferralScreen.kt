@@ -126,10 +126,21 @@ fun ReferralScreen(
                                 referralCode?.let {
                                     val sendIntent: Intent = Intent().apply {
                                         action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TEXT, "Join GenGhealth and use my referral code $it to get 500 bonus points! Download now.")
+                                        val shareMessage = """
+                                            Hey! I'm using GenGhealth to earn rewards for healthy screen time habits.
+                                            
+                                            Join me and use my referral code: $it
+                                            
+                                            We'll both get 500 bonus points! 🎁
+                                            
+                                            Download the app here:
+                                            https://quizedguy-art.github.io/GenGhealth/
+                                        """.trimIndent()
+                                        
+                                        putExtra(Intent.EXTRA_TEXT, shareMessage)
                                         type = "text/plain"
                                     }
-                                    val shareIntent = Intent.createChooser(sendIntent, null)
+                                    val shareIntent = Intent.createChooser(sendIntent, "Share Referral Code")
                                     context.startActivity(shareIntent)
                                 }
                             },
