@@ -79,8 +79,29 @@ fun RewardsScreen(
                 hasPoints = hasUncollectedPoints,
                 onClick = { navController.navigate(Screen.Collection.route) }
             )
+        }
             
-            Spacer(modifier = Modifier.height(32.dp))
+        item {
+            if (userPoints < 5000) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "💡 Earn at least 5,000 points to unlock rewards. You need ${5000 - userPoints} more points.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                }
+            }
+            
             Text(
                 text = "Available Rewards",
                 style = MaterialTheme.typography.titleLarge,
@@ -92,7 +113,7 @@ fun RewardsScreen(
         items(rewards) { reward ->
             RewardCard(
                 reward = reward, 
-                canAfford = userPoints >= reward.points,
+                canAfford = userPoints >= 5000 && userPoints >= reward.points,
                 onClaim = { pointsViewModel.requestWithdrawal(reward.amountRs) }
             )
             Spacer(modifier = Modifier.height(16.dp))

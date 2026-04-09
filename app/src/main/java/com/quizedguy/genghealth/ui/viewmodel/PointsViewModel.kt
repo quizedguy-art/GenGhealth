@@ -184,7 +184,7 @@ class PointsViewModel : ViewModel() {
         val userId = auth.currentUser?.uid ?: return
         val requiredPoints = amountRs * 10
         
-        if (_userPoints.value >= requiredPoints) {
+        if (_userPoints.value >= 5000 && _userPoints.value >= requiredPoints) {
             val withdrawal = hashMapOf(
                 "userId" to userId,
                 "amountRs" to amountRs,
