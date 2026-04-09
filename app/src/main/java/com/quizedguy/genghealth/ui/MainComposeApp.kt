@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.ui.text.font.FontWeight
 import com.quizedguy.genghealth.util.RewardedAdManager
 import android.app.Activity
 
@@ -37,6 +38,16 @@ fun MainComposeApp() {
     var showCompatibilityAlert by remember { 
         mutableStateOf(!CompatibilityUtils.isGooglePlayServicesAvailable(context)) 
     }
+
+    var showReferralPopup by remember { mutableStateOf(false) }
+    
+    // Launch Effect to show Referral Popup once per session when logged in
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            // In a real app, you might check if they've seen it recently via SharedPreferences/DataStore
+            showReferralPopup = true
+        }
+    }
     
     if (showCompatibilityAlert) {
         AlertDialog(
@@ -52,8 +63,7 @@ fun MainComposeApp() {
             }
         )
     }
-    
-    // If logged out, show Login screen directly. This is the most reliable way to handle session changes.
+
     if (currentUser == null) {
         LoginScreen(
             authViewModel = authViewModel,
@@ -64,6 +74,29 @@ fun MainComposeApp() {
     } else {
         // Only initialize NavController when logged in to avoid cross-session state issues
         val navController = rememberNavController()
+
+        if (showReferralPopup) {
+            AlertDialog(
+                onDismissRequest = { showReferralPopup = false },
+                title = { Text("Refer & Earn 500 Pts!", fontWeight = FontWeight.Bold) },
+                text = { Text("Invite your friends to GenGhealth and you both get 500 bonus points when they join. Start earning today!") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showReferralPopup = false
+                            navController.navigate(Screen.Referrals.route)
+                        }
+                    ) {
+                        Text("Refer Now")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showReferralPopup = false }) {
+                        Text("Maybe Later")
+                    }
+                }
+            )
+        }
         
         Scaffold(
             bottomBar = {
@@ -134,6 +167,12 @@ fun MainComposeApp() {
                         navController = navController,
                         authViewModel = authViewModel
                     ) 
+                }
+                composable(Screen.Referrals.route) {
+                    ReferralScreen(
+                        navController = navController,
+                        authViewModel = authViewModel
+                    )
                 }
             }
         }

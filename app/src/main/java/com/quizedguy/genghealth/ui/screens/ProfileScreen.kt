@@ -96,6 +96,13 @@ fun ProfileScreen(
                     icon = Icons.Default.List,
                     onClick = { navController.navigate(Screen.Points.route) }
                 )
+
+                ActionItem(
+                    title = "My Referrals",
+                    subtitle = "Refer friends & earn 500 points",
+                    icon = Icons.Default.Face,
+                    onClick = { navController.navigate(Screen.Referrals.route) }
+                )
                 
                 ActionItem(
                     title = "Privacy Policy",

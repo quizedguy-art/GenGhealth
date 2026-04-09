@@ -10,6 +10,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -114,6 +116,14 @@ fun DashboardScreen(
             item {
                 PointsHeader(points = userPoints, onRedeemClick = { 
                     navController.navigate(Screen.Rewards.route)
+                })
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Refer & Earn Card
+            item {
+                ReferAndEarnCard(onReferClick = {
+                    navController.navigate(Screen.Referrals.route)
                 })
                 Spacer(modifier = Modifier.height(24.dp))
             }
@@ -228,6 +238,34 @@ fun RewardGoalsCard(currentMillis: Long) {
             RewardGoalItem("Balanced Life", "Under 6h", "100 Pts", currentMillis < 6 * 3600000)
             Divider(modifier = Modifier.padding(vertical = 4.dp), color = Color.LightGray.copy(alpha = 0.2f))
             RewardGoalItem("Moderate User", "Under 7h", "50 Pts", currentMillis < 7 * 3600000)
+        }
+    }
+}
+
+@Composable
+fun ReferAndEarnCard(onReferClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)),
+        onClick = onReferClick
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.size(48.dp).background(MaterialTheme.colorScheme.secondary, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.Share, contentDescription = null, tint = Color.White)
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = "Refer & Earn", fontWeight = FontWeight.Bold)
+                Text(text = "Get 500 Pts for every friend", style = MaterialTheme.typography.bodySmall)
+            }
+            Text(text = "Refer Now", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
         }
     }
 }

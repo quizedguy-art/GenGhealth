@@ -30,6 +30,9 @@ class PointsViewModel : ViewModel() {
     private val _dailyUsageHistory = MutableStateFlow(listOf<DailyUsageRecord>())
     val dailyUsageHistory = _dailyUsageHistory.asStateFlow()
 
+    private val _collectingRecordIds = MutableStateFlow<Set<String>>(emptySet())
+    val collectingRecordIds = _collectingRecordIds.asStateFlow()
+
     init {
         loadUserPoints()
         loadWithdrawalHistory()
@@ -91,6 +94,10 @@ class PointsViewModel : ViewModel() {
     fun collectPoints(record: DailyUsageRecord) {
         val userId = auth.currentUser?.uid ?: return
         if (record.isCollected || record.pointsPotential <= 0) return
+        
+        // Prevent duplicate processing
+        if (_collectingRecordIds.value.contains(record.id)) return
+        _collectingRecordIds.value += record.id
 
         val batch = db.batch()
         
@@ -102,8 +109,8 @@ class PointsViewModel : ViewModel() {
         val userRef = db.collection("users").document(userId)
         batch.update(userRef, "points", com.google.firebase.firestore.FieldValue.increment(record.pointsPotential.toLong()))
         
-        batch.commit().addOnSuccessListener {
-            // Updated via listeners
+        batch.commit().addOnCompleteListener {
+            _collectingRecordIds.value -= record.id
         }
     }
 

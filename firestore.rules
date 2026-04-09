@@ -9,8 +9,36 @@ service cloud.firestore {
 
     // Allow users to read and write their own profile
     match /users/{userId} {
+      // Allow read to all authenticated users (to verify referral codes)
+      allow read: if request.auth != null;
+      
+      // Traditional read-write for owner
       allow read, write: if request.auth != null && request.auth.uid == userId;
-      // Admins can read all profiles to manage rewards
+      
+      // Referral Logic: Allow another user to increment points by exactly 500
+      allow update: if request.auth != null && (
+          // Case 1: The owner of the profile is updating (for daily points, etc)
+          (request.auth.uid == userId) ||
+          // Case 2: A different user is awarding a referral bonus
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['points', 'referredBy']) &&
+           request.resource.data.points == resource.data.points + 500)
+      );
+      
+      allow read: if isAdmin();
+    }
+    
+    // Referrals History
+    match /referrals/{referralId} {
+      // Referrer can read their history
+      allow read: if request.auth != null && resource.data.referrerId == request.auth.uid;
+      // New user can create the log during sign up
+      allow create: if request.auth != null && request.resource.data.referredId == request.auth.uid;
+      allow read: if isAdmin();
+    }
+
+    // Daily Usage Tracking
+    match /daily_usage/{usageId} {
+      allow read, write: if request.auth != null && (resource.data.userId == request.auth.uid || request.resource.data.userId == request.auth.uid);
       allow read: if isAdmin();
     }
     

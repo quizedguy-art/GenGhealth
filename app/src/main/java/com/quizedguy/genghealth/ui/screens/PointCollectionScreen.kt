@@ -30,6 +30,7 @@ fun PointCollectionScreen(
     pointsViewModel: PointsViewModel = viewModel()
 ) {
     val dailyUsage by pointsViewModel.dailyUsageHistory.collectAsState()
+    val collectingRecordIds by pointsViewModel.collectingRecordIds.collectAsState()
     val context = LocalContext.current
     
     LaunchedEffect(Unit) {
@@ -76,6 +77,7 @@ fun PointCollectionScreen(
                 items(dailyUsage) { record ->
                     UsageHistoryItem(
                         record = record,
+                        isProcessing = collectingRecordIds.contains(record.id),
                         onCollect = { pointsViewModel.collectPoints(record) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -108,7 +110,7 @@ fun InfoCard() {
 }
 
 @Composable
-fun UsageHistoryItem(record: DailyUsageRecord, onCollect: () -> Unit) {
+fun UsageHistoryItem(record: DailyUsageRecord, isProcessing: Boolean, onCollect: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -138,10 +140,15 @@ fun UsageHistoryItem(record: DailyUsageRecord, onCollect: () -> Unit) {
             } else if (record.pointsPotential > 0) {
                 Button(
                     onClick = onCollect,
+                    enabled = !isProcessing,
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    Text(text = "Collect ${record.pointsPotential}")
+                    if (isProcessing) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
+                    } else {
+                        Text(text = "Collect ${record.pointsPotential}")
+                    }
                 }
             } else {
                 Text(

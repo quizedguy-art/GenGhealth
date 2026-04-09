@@ -32,6 +32,8 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     
+    var referralCode by remember { mutableStateOf("") }
+    
     val isLoading by authViewModel.isLoading.collectAsState(initial = false)
     val error by authViewModel.error.collectAsState(initial = null)
 
@@ -94,6 +96,17 @@ fun LoginScreen(
                         singleLine = true
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+                    
+                    OutlinedTextField(
+                        value = referralCode,
+                        onValueChange = { referralCode = it },
+                        label = { Text("Referral Code (Optional)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true,
+                        placeholder = { Text("Enter code to get 500 bonus") }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 OutlinedTextField(
@@ -135,7 +148,7 @@ fun LoginScreen(
                         if (isLoginMode) {
                             authViewModel.login(email, password, onLoginSuccess)
                         } else {
-                            authViewModel.signUp(email, password, name, onLoginSuccess)
+                            authViewModel.signUp(email, password, name, referralCode, onLoginSuccess)
                         }
                     },
                     modifier = Modifier
