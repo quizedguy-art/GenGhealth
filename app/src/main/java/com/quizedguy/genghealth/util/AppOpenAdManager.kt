@@ -50,12 +50,8 @@ class AppOpenAdManager(private val myApplication: GengHealthApplication) :
 
         isLoadingAd = true
         val request = AdRequest.Builder().build()
-        // Switch between Test and Production Ad Unit IDs
-        val adUnitId = if (BuildConfig.DEBUG) {
-            myApplication.getString(com.quizedguy.genghealth.R.string.test_ad_unit_app_open)
-        } else {
-            myApplication.getString(com.quizedguy.genghealth.R.string.ad_unit_app_open)
-        }
+        // Always use Production Ad Unit ID as per user request
+        val adUnitId = myApplication.getString(com.quizedguy.genghealth.R.string.ad_unit_app_open)
 
         AppOpenAd.load(
             myApplication,
@@ -73,6 +69,13 @@ class AppOpenAdManager(private val myApplication: GengHealthApplication) :
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     isLoadingAd = false
                     Log.e(TAG, "Ad failed to load: ${loadAdError.message} (Code: ${loadAdError.code})")
+                    
+                    // Show error diagnostic to help user see why production ads aren't showing
+                    currentActivity?.let { activity ->
+                        activity.runOnUiThread {
+                            Toast.makeText(activity, "App Open Ad failed: ${loadAdError.code}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     
                     // Exponential backoff retry
                     val delayMillis = Math.min(Math.pow(2.0, retryAttempt.toDouble()).toLong() * 1000, 64000L)

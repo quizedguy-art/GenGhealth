@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenGhealth Promotion - 15s HD</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="banner-container">
+        <!-- Scene 1: Logo & Intro -->
+        <div class="scene" id="scene-intro">
+            <div class="logo-wrapper">
+                <span class="logo-text">GenG<span>health</span></span>
+            </div>
+            <h1 class="main-title">Turn Screen Time into <span class="highlight">Real Cash</span></h1>
+        </div>
+
+        <!-- Scene 2: Features -->
+        <div class="scene" id="scene-features">
+            <div class="feature-piles">
+                <div class="feature-card" id="feat-1">
+                    <span class="icon">📊</span>
+                    <h3>Usage Analytics</h3>
+                </div>
+                <div class="feature-card" id="feat-2">
+                    <span class="icon">💰</span>
+                    <h3>Points Engine</h3>
+                </div>
+                <div class="feature-card" id="feat-3">
+                    <span class="icon">👥</span>
+                    <h3>Refer & Earn</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 3: Rewards/Mockup -->
+        <div class="scene" id="scene-rewards">
+            <div class="mockup-container">
+                <img src="assets/hero_app_mockup.png" alt="App Mockup" class="app-mockup">
+                <div class="cash-float">
+                    <div class="cash-item">₹500</div>
+                    <div class="cash-item">₹100</div>
+                    <div class="cash-item">₹1000</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final CTA: Blinking Button -->
+        <div class="cta-overlay">
+            <p class="cta-slogan">Start Earning Money Today</p>
+            <a href="https://quizedguy-art.github.io/GenGhealth/genghealth.apk" class="blink-btn">DOWNLOAD NOW</a>
+        </div>
+
+        <!-- Background Decor -->
+        <div class="bg-blobs">
+            <div class="blob" id="blob-1"></div>
+            <div class="blob" id="blob-2"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

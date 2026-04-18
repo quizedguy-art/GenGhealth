@@ -3,8 +3,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Function to check if the current user is an admin
     function isAdmin() {
-      return request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      return request.auth != null && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true ||
+        request.auth.token.email == 'luckykaseqq@gmail.com'
+      );
     }
 
     // Allow users to read and write their own profile

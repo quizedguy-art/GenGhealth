@@ -30,11 +30,8 @@ import kotlinx.coroutines.tasks.await
 object RewardedAdManager {
     private const val TAG = "RewardedAdManager"
     private fun getAdUnitId(context: Context): String {
-        return if (BuildConfig.DEBUG) {
-            context.getString(com.quizedguy.genghealth.R.string.test_ad_unit_rewarded)
-        } else {
-            context.getString(com.quizedguy.genghealth.R.string.ad_unit_rewarded)
-        }
+        // Always use Production Ad Unit ID as per user request
+        return context.getString(com.quizedguy.genghealth.R.string.ad_unit_rewarded)
     }
     
     private var rewardedAd: RewardedAd? = null
@@ -72,6 +69,11 @@ object RewardedAdManager {
         RewardedAd.load(context, currentAdUnitId, adRequest, object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.e(TAG, "Ad failed to load: ${adError.message} (Code: ${adError.code})")
+                
+                // Show diagnostic Toast to help user understand why ads are missing
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(context, "Rewarded Ad error: ${adError.code}", Toast.LENGTH_SHORT).show()
+                }
                 rewardedAd = null
                 isLoading = false
                 _isAdLoaded.value = false

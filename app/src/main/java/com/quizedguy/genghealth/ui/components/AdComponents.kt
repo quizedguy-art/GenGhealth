@@ -13,6 +13,7 @@ import com.google.android.gms.ads.AdView
 import android.util.Log
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.LoadAdError
+import android.widget.Toast
 
 @Composable
 fun BannerAdView(modifier: Modifier = Modifier) {
@@ -21,12 +22,8 @@ fun BannerAdView(modifier: Modifier = Modifier) {
         factory = { context ->
             AdView(context).apply {
                 setAdSize(AdSize.BANNER)
-                // Switch between Test and Production Ad Unit IDs
-                adUnitId = if (BuildConfig.DEBUG) {
-                    context.getString(com.quizedguy.genghealth.R.string.test_ad_unit_banner)
-                } else {
-                    context.getString(com.quizedguy.genghealth.R.string.ad_unit_banner)
-                }
+                // Always use Production Ad Unit ID as per user request
+                adUnitId = context.getString(com.quizedguy.genghealth.R.string.ad_unit_banner)
                 
                 adListener = object : AdListener() {
                     override fun onAdLoaded() {
@@ -35,6 +32,8 @@ fun BannerAdView(modifier: Modifier = Modifier) {
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
                         Log.e("AdMob", "Ad failed to load: ${error.message} (Code: ${error.code})")
+                        // Show diagnostic Toast to help user understand why banner ads are missing
+                        Toast.makeText(context, "Banner Ad error: ${error.code}", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onAdOpened() {
