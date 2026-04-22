@@ -44,19 +44,27 @@ class MidnightRewardWorker(
             val totalMillis = UsageStatsHelper.getTodayTotalScreenTime(applicationContext)
             val pointsPotential = calculatePoints(totalMillis)
 
-            // 3. Create a daily usage record for manual collection
             val docId = "${userId}_$today"
-            val record = hashMapOf(
-                "userId" to userId,
-                "date" to today,
-                "totalMillis" to totalMillis,
-                "pointsPotential" to pointsPotential,
-                "isCollected" to false
-            )
-
-            db.collection("daily_usage").document(docId)
-                .set(record, SetOptions.merge())
-                .await()
+            val usageRef = db.collection("daily_usage").document(docId)
+            val usageSnapshot = usageRef.get().await()
+            
+            if (usageSnapshot.exists()) {
+                // If document already exists, only update usage data
+                usageRef.update(
+                    "totalMillis", totalMillis,
+                    "pointsPotential", pointsPotential
+                ).await()
+            } else {
+                // Create new record
+                val record = hashMapOf(
+                    "userId" to userId,
+                    "date" to today,
+                    "totalMillis" to totalMillis,
+                    "pointsPotential" to pointsPotential,
+                    "isCollected" to false
+                )
+                usageRef.set(record).await()
+            }
             
             // Mark lastRewardDate in user doc to avoid daily worker duplication
             db.collection("users").document(userId)

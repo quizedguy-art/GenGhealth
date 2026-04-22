@@ -55,6 +55,10 @@ class PointsViewModel : ViewModel() {
                         doc.toObject(DailyUsageRecord::class.java)?.copy(id = doc.id)
                     }
                     _dailyUsageHistory.value = list
+                    // Clear records from collecting set if they are now confirmed collected in Firestore
+                    _collectingRecordIds.value = _collectingRecordIds.value.filter { id ->
+                        list.find { it.id == id }?.isCollected != true
+                    }.toSet()
                 }
             }
     }
@@ -82,21 +86,15 @@ class PointsViewModel : ViewModel() {
                 val usageRef = db.collection("daily_usage").document(docId)
                 
                 usageRef.get().addOnSuccessListener { snapshot ->
-                    // Check if document exists and is already collected
-                    val isAlreadyCollected = if (snapshot.exists()) {
-                        snapshot.getBoolean("isCollected") ?: false
-                    } else {
-                        false
-                    }
-                    
-                    if (isAlreadyCollected) {
-                        // Keep isCollected as true, only update usage data
+                    if (snapshot.exists()) {
+                        // Document exists, only update usage data
+                        // We DO NOT update isCollected here to avoid overwriting a concurrent collection
                         usageRef.update(
                             "totalMillis", usageMillis,
                             "pointsPotential", pointsPotential
                         )
                     } else {
-                        // Full merge, ensuring isCollected remains false or is created as false
+                        // New document, initialize it
                         val record = hashMapOf(
                             "userId" to userId,
                             "date" to dateStr,
@@ -104,7 +102,7 @@ class PointsViewModel : ViewModel() {
                             "pointsPotential" to pointsPotential,
                             "isCollected" to false
                         )
-                        usageRef.set(record, SetOptions.merge())
+                        usageRef.set(record)
                     }
                 }
             }
@@ -115,21 +113,27 @@ class PointsViewModel : ViewModel() {
         val userId = auth.currentUser?.uid ?: return
         if (record.isCollected || record.pointsPotential <= 0) return
         
-        // Prevent duplicate processing
+        // Prevent duplicate processing in UI
         if (_collectingRecordIds.value.contains(record.id)) return
         _collectingRecordIds.value += record.id
 
-        val batch = db.batch()
-        
-        // 1. Mark as collected
         val usageRef = db.collection("daily_usage").document(record.id)
-        batch.update(usageRef, "isCollected", true)
-        
-        // 2. Increment user points
         val userRef = db.collection("users").document(userId)
-        batch.update(userRef, "points", com.google.firebase.firestore.FieldValue.increment(record.pointsPotential.toLong()))
         
-        batch.commit().addOnCompleteListener {
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(usageRef)
+            val isAlreadyCollected = snapshot.getBoolean("isCollected") ?: false
+            
+            if (!isAlreadyCollected) {
+                // 1. Mark as collected in the record
+                transaction.update(usageRef, "isCollected", true)
+                // 2. Increment user points
+                transaction.update(userRef, "points", com.google.firebase.firestore.FieldValue.increment(record.pointsPotential.toLong()))
+            }
+            null
+        }.addOnFailureListener {
+            // Only remove on failure. On success, we wait for the snapshot listener 
+            // to update the record's isCollected status before removing from the set.
             _collectingRecordIds.value -= record.id
         }
     }
