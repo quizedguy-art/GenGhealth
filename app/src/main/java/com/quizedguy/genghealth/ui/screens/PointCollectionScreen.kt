@@ -138,13 +138,23 @@ fun UsageHistoryItem(record: DailyUsageRecord, isProcessing: Boolean, onCollect:
                     style = MaterialTheme.typography.labelLarge
                 )
             } else if (record.pointsPotential > 0) {
+                var clicked by remember { mutableStateOf(false) }
+                val effectivelyProcessing = isProcessing || clicked
+                
+                LaunchedEffect(isProcessing) {
+                    if (!isProcessing) clicked = false
+                }
+
                 Button(
-                    onClick = onCollect,
-                    enabled = !isProcessing,
+                    onClick = {
+                        clicked = true
+                        onCollect()
+                    },
+                    enabled = !effectivelyProcessing,
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    if (isProcessing) {
+                    if (effectivelyProcessing) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
                     } else {
                         Text(text = "Collect ${record.pointsPotential}")

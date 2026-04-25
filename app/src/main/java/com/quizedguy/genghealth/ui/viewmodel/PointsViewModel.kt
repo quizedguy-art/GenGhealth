@@ -57,7 +57,9 @@ class PointsViewModel : ViewModel() {
                     _dailyUsageHistory.value = list
                     // Clear records from collecting set if they are now confirmed collected in Firestore
                     _collectingRecordIds.value = _collectingRecordIds.value.filter { id ->
-                        list.find { it.id == id }?.isCollected != true
+                        val recordInSnapshot = list.find { it.id == id }
+                        // Only keep in processing set if not found or not yet collected
+                        recordInSnapshot?.isCollected != true
                     }.toSet()
                 }
             }
@@ -131,9 +133,13 @@ class PointsViewModel : ViewModel() {
                 transaction.update(userRef, "points", com.google.firebase.firestore.FieldValue.increment(record.pointsPotential.toLong()))
             }
             null
+        }.addOnSuccessListener {
+            // Success: Update local state immediately to avoid flicker while waiting for snapshot
+            _dailyUsageHistory.value = _dailyUsageHistory.value.map {
+                if (it.id == record.id) it.copy(isCollected = true) else it
+            }
+            _collectingRecordIds.value -= record.id
         }.addOnFailureListener {
-            // Only remove on failure. On success, we wait for the snapshot listener 
-            // to update the record's isCollected status before removing from the set.
             _collectingRecordIds.value -= record.id
         }
     }
