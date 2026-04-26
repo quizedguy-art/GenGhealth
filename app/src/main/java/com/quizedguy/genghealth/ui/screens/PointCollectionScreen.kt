@@ -76,9 +76,7 @@ fun PointCollectionScreen(
             } else {
                 items(dailyUsage) { record ->
                     UsageHistoryItem(
-                        record = record,
-                        isProcessing = collectingRecordIds.contains(record.id),
-                        onCollect = { pointsViewModel.collectPoints(record) }
+                        record = record
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -110,7 +108,7 @@ fun InfoCard() {
 }
 
 @Composable
-fun UsageHistoryItem(record: DailyUsageRecord, isProcessing: Boolean, onCollect: () -> Unit) {
+fun UsageHistoryItem(record: DailyUsageRecord) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -131,40 +129,27 @@ fun UsageHistoryItem(record: DailyUsageRecord, isProcessing: Boolean, onCollect:
             }
             
             if (record.isCollected) {
-                Text(
-                    text = "Collected",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge
-                )
-            } else if (record.pointsPotential > 0) {
-                var clicked by remember { mutableStateOf(false) }
-                val effectivelyProcessing = isProcessing || clicked
-                
-                LaunchedEffect(isProcessing) {
-                    if (!isProcessing) clicked = false
-                }
-
-                Button(
-                    onClick = {
-                        clicked = true
-                        onCollect()
-                    },
-                    enabled = !effectivelyProcessing,
-                    shape = RoundedCornerShape(8.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp)
-                ) {
-                    if (effectivelyProcessing) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
-                    } else {
-                        Text(text = "Collect ${record.pointsPotential}")
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Points Credited",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    if (record.pointsPotential > 0) {
+                        Text(
+                            text = "+${record.pointsPotential} Pts",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             } else {
                 Text(
-                    text = "No Rewards",
+                    text = "Usage Recorded",
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }

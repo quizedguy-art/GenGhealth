@@ -35,6 +35,13 @@ class PointsViewModel : ViewModel() {
     private val _collectingRecordIds = MutableStateFlow<Set<String>>(emptySet())
     val collectingRecordIds = _collectingRecordIds.asStateFlow()
 
+    private val _pointCreditEvent = MutableStateFlow<Int?>(null)
+    val pointCreditEvent = _pointCreditEvent.asStateFlow()
+
+    fun clearPointCreditEvent() {
+        _pointCreditEvent.value = null
+    }
+
     init {
         loadUserPoints()
         loadWithdrawalHistory()
@@ -55,12 +62,6 @@ class PointsViewModel : ViewModel() {
                         doc.toObject(DailyUsageRecord::class.java)?.copy(id = doc.id)
                     }
                     _dailyUsageHistory.value = list
-                    // Clear records from collecting set if they are now confirmed collected in Firestore
-                    _collectingRecordIds.value = _collectingRecordIds.value.filter { id ->
-                        val recordInSnapshot = list.find { it.id == id }
-                        // Only keep in processing set if not found or not yet collected
-                        recordInSnapshot?.isCollected != true
-                    }.toSet()
                 }
             }
     }
@@ -117,51 +118,6 @@ class PointsViewModel : ViewModel() {
         }
     }
 
-    fun collectPoints(record: DailyUsageRecord) {
-        val userId = auth.currentUser?.uid ?: return
-        if (record.isCollected) return
-        
-        // Prevent duplicate processing in UI
-        if (_collectingRecordIds.value.contains(record.id)) return
-        _collectingRecordIds.value += record.id
-
-        val usageRef = db.collection("daily_usage").document(record.id)
-        val userRef = db.collection("users").document(userId)
-        
-        db.runTransaction { transaction ->
-            val usageSnapshot = transaction.get(usageRef)
-            
-            if (!usageSnapshot.exists()) {
-                throw Exception("Usage record not found")
-            }
-
-            val isAlreadyCollected = usageSnapshot.getBoolean("isCollected") ?: false
-            val pointsPotential = usageSnapshot.getLong("pointsPotential")?.toInt() ?: record.pointsPotential
-            
-            if (!isAlreadyCollected && pointsPotential > 0) {
-                // 1. Mark as collected in the record
-                transaction.update(usageRef, "isCollected", true)
-                
-                // 2. Increment user points - Use set with merge to be safe if doc is somehow missing
-                val increment = com.google.firebase.firestore.FieldValue.increment(pointsPotential.toLong())
-                transaction.set(userRef, mapOf("points" to increment), com.google.firebase.firestore.SetOptions.merge())
-                
-                true // Indicate success
-            } else {
-                false // Already collected or no points
-            }
-        }.addOnSuccessListener { success ->
-            if (success == true) {
-                // Success: Update local state immediately to avoid flicker
-                _dailyUsageHistory.value = _dailyUsageHistory.value.map {
-                    if (it.id == record.id) it.copy(isCollected = true) else it
-                }
-            }
-            _collectingRecordIds.value -= record.id
-        }.addOnFailureListener {
-            _collectingRecordIds.value -= record.id
-        }
-    }
 
     private fun calculatePoints(millis: Long): Int {
         val hours = millis / 3600000.0
@@ -210,6 +166,15 @@ class PointsViewModel : ViewModel() {
                 if (e != null) return@addSnapshotListener
                 if (snapshot != null && snapshot.exists()) {
                     val points = snapshot.getLong("points")?.toInt() ?: 0
+                    
+                    // Notify user if points increased
+                    if (points > _userPoints.value && _userPoints.value > 0) {
+                        val difference = points - _userPoints.value
+                        // We need a context for notification. This is a bit tricky in ViewModel.
+                        // However, we can use a SharedFlow to signal the UI to show a snackbar or notification.
+                        _pointCreditEvent.value = difference
+                    }
+
                     _userPoints.value = points
                     calculateTotalEarned(_withdrawalHistory.value, points)
                 }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.quizedguy.genghealth.util.AppOpenAdManager
 import com.quizedguy.genghealth.util.RewardedAdManager
+import com.quizedguy.genghealth.util.RewardedInterstitialAdManager
 import com.google.android.gms.ads.MobileAds
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -29,6 +30,7 @@ class GengHealthApplication : Application() {
             // Initial ad fetches only after SDK is ready
             appOpenAdManager.fetchAd()
             RewardedAdManager.loadAd(this)
+            RewardedInterstitialAdManager.loadAd(this)
         }
 
         // Schedule Workers

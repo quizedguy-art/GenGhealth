@@ -79,10 +79,10 @@ class MidnightRewardWorker(
                 .await()
 
             if (pointsPotential > 0) {
-                Log.d("MidnightReward", "Successfully created record for $pointsPotential points for $today.")
-                sendNotification(pointsPotential)
+                Log.d("MidnightReward", "Successfully created record for $pointsPotential potential points for $today.")
+                sendNotification()
             } else {
-                Log.d("MidnightReward", "No points earned today ($today).")
+                Log.d("MidnightReward", "No points potential today ($today).")
             }
 
         } catch (e: Exception) {
@@ -103,7 +103,7 @@ class MidnightRewardWorker(
         }
     }
 
-    private fun sendNotification(points: Int) {
+    private fun sendNotification() {
         val channelId = "reward_channel"
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -113,8 +113,8 @@ class MidnightRewardWorker(
         }
 
         val notification = NotificationCompat.Builder(applicationContext, channelId)
-            .setContentTitle("Reward Earned!")
-            .setContentText("You earned $points points for today's healthy phone usage!")
+            .setContentTitle("Usage Recorded!")
+            .setContentText("Today's usage has been recorded. Admin will credit your points soon!")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()

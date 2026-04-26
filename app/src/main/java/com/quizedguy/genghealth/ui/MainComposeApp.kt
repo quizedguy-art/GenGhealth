@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.ui.text.font.FontWeight
 import com.quizedguy.genghealth.util.RewardedAdManager
+import com.quizedguy.genghealth.util.RewardedInterstitialAdManager
 import android.app.Activity
 
 @Composable
@@ -32,6 +33,7 @@ fun MainComposeApp() {
     LaunchedEffect(currentUser) {
         if (currentUser != null && context is Activity) {
             RewardedAdManager.loadAd(context)
+            RewardedInterstitialAdManager.loadAd(context)
         }
     }
     
@@ -74,6 +76,15 @@ fun MainComposeApp() {
     } else {
         // Only initialize NavController when logged in to avoid cross-session state issues
         val navController = rememberNavController()
+        
+        // Show Rewarded Interstitial Ad on every page change
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        LaunchedEffect(navBackStackEntry) {
+            if (context is Activity && currentUser != null) {
+                // We show it on destination change, but the manager has a 60s cooldown built-in
+                RewardedInterstitialAdManager.showAd(context)
+            }
+        }
 
         if (showReferralPopup) {
             AlertDialog(

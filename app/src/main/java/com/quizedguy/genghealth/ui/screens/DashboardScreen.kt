@@ -68,6 +68,15 @@ fun DashboardScreen(
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val pointCreditEvent by pointsViewModel.pointCreditEvent.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(pointCreditEvent) {
+        pointCreditEvent?.let { amount ->
+            snackbarHostState.showSnackbar("You've been credited $amount points! 🎉")
+            pointsViewModel.clearPointCreditEvent()
+        }
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -106,62 +115,66 @@ fun DashboardScreen(
             }
         )
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Creative Header with Points
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.app_logo),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = "GenGhealth Home",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Creative Header with Points
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.app_logo),
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "GenGhealth Home",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
-            }
 
-            item {
-                BannerAdView(modifier = Modifier.padding(vertical = 8.dp))
-            }
+                item {
+                    BannerAdView(modifier = Modifier.padding(vertical = 8.dp))
+                }
 
-            // Points Card
-            item {
-                PointsHeader(points = userPoints, onRedeemClick = { 
-                    navController.navigate(Screen.Rewards.route)
-                })
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+                // Points Card
+                item {
+                    PointsHeader(points = userPoints, onRedeemClick = { 
+                        navController.navigate(Screen.Rewards.route)
+                    })
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-            // Refer & Earn Card
-            item {
-                ReferAndEarnCard(onReferClick = {
-                    navController.navigate(Screen.Referrals.route)
-                })
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+                // Refer & Earn Card
+                item {
+                    ReferAndEarnCard(onReferClick = {
+                        navController.navigate(Screen.Referrals.route)
+                    })
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
-            item {
-                UsageTimer(time = viewModel.formatTime(screenTime))
-                Spacer(modifier = Modifier.height(32.dp))
-            }
+                item {
+                    UsageTimer(time = viewModel.formatTime(screenTime))
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
 
-            item {
-                RewardGoalsCard(currentMillis = screenTime)
-            }
-            
-            item {
-                BannerAdView(modifier = Modifier.padding(vertical = 16.dp))
+                item {
+                    RewardGoalsCard(currentMillis = screenTime)
+                }
+                
+                item {
+                    BannerAdView(modifier = Modifier.padding(vertical = 16.dp))
+                }
             }
         }
     }
@@ -253,7 +266,8 @@ fun RewardGoalsCard(currentMillis: Long) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text(text = "Today's Potential", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(text = "Earning Guidelines", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(text = "Points are credited manually by Admin based on your daily usage.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(16.dp))
             
             RewardGoalItem("Healthy Choice", "Under 5h", "200 Pts", currentMillis < 5 * 3600000)

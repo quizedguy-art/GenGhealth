@@ -8,6 +8,7 @@
     <string name="ad_unit_rewarded">ca-app-pub-1444583349758700/9565903011</string>
     <string name="ad_unit_app_open">ca-app-pub-1444583349758700/9028185695</string>
     <string name="ad_unit_banner">ca-app-pub-1444583349758700/2060273500</string>
+    <string name="ad_unit_rewarded_interstitial">ca-app-pub-1444583349758700/4790896516</string>
     
     <!-- Test Ad Unit IDs (Google Sample IDs) -->
     <string name="test_ad_unit_rewarded">ca-app-pub-3940256099942544/5224354917</string>
