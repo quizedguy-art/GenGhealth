@@ -90,11 +90,17 @@ class PointsViewModel : ViewModel() {
                 usageRef.get().addOnSuccessListener { snapshot ->
                     if (snapshot.exists()) {
                         // Document exists, only update usage data
-                        // We DO NOT update isCollected here to avoid overwriting a concurrent collection
-                        usageRef.update(
-                            "totalMillis", usageMillis,
-                            "pointsPotential", pointsPotential
-                        )
+                        val isCollected = snapshot.getBoolean("isCollected") ?: false
+                        
+                        if (!isCollected) {
+                            usageRef.update(
+                                "totalMillis", usageMillis,
+                                "pointsPotential", pointsPotential
+                            )
+                        } else {
+                            // If already collected, only update millis for accuracy, keep potential as what was credited
+                            usageRef.update("totalMillis", usageMillis)
+                        }
                     } else {
                         // New document, initialize it
                         val record = hashMapOf(
@@ -113,7 +119,7 @@ class PointsViewModel : ViewModel() {
 
     fun collectPoints(record: DailyUsageRecord) {
         val userId = auth.currentUser?.uid ?: return
-        if (record.isCollected || record.pointsPotential <= 0) return
+        if (record.isCollected) return
         
         // Prevent duplicate processing in UI
         if (_collectingRecordIds.value.contains(record.id)) return
@@ -123,20 +129,33 @@ class PointsViewModel : ViewModel() {
         val userRef = db.collection("users").document(userId)
         
         db.runTransaction { transaction ->
-            val snapshot = transaction.get(usageRef)
-            val isAlreadyCollected = snapshot.getBoolean("isCollected") ?: false
+            val usageSnapshot = transaction.get(usageRef)
             
-            if (!isAlreadyCollected) {
+            if (!usageSnapshot.exists()) {
+                throw Exception("Usage record not found")
+            }
+
+            val isAlreadyCollected = usageSnapshot.getBoolean("isCollected") ?: false
+            val pointsPotential = usageSnapshot.getLong("pointsPotential")?.toInt() ?: record.pointsPotential
+            
+            if (!isAlreadyCollected && pointsPotential > 0) {
                 // 1. Mark as collected in the record
                 transaction.update(usageRef, "isCollected", true)
-                // 2. Increment user points
-                transaction.update(userRef, "points", com.google.firebase.firestore.FieldValue.increment(record.pointsPotential.toLong()))
+                
+                // 2. Increment user points - Use set with merge to be safe if doc is somehow missing
+                val increment = com.google.firebase.firestore.FieldValue.increment(pointsPotential.toLong())
+                transaction.set(userRef, mapOf("points" to increment), com.google.firebase.firestore.SetOptions.merge())
+                
+                true // Indicate success
+            } else {
+                false // Already collected or no points
             }
-            null
-        }.addOnSuccessListener {
-            // Success: Update local state immediately to avoid flicker while waiting for snapshot
-            _dailyUsageHistory.value = _dailyUsageHistory.value.map {
-                if (it.id == record.id) it.copy(isCollected = true) else it
+        }.addOnSuccessListener { success ->
+            if (success == true) {
+                // Success: Update local state immediately to avoid flicker
+                _dailyUsageHistory.value = _dailyUsageHistory.value.map {
+                    if (it.id == record.id) it.copy(isCollected = true) else it
+                }
             }
             _collectingRecordIds.value -= record.id
         }.addOnFailureListener {

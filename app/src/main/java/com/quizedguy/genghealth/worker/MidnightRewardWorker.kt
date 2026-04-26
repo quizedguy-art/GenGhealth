@@ -50,10 +50,17 @@ class MidnightRewardWorker(
             
             if (usageSnapshot.exists()) {
                 // If document already exists, only update usage data
-                usageRef.update(
-                    "totalMillis", totalMillis,
-                    "pointsPotential", pointsPotential
-                ).await()
+                val isCollected = usageSnapshot.getBoolean("isCollected") ?: false
+                
+                if (!isCollected) {
+                    usageRef.update(
+                        "totalMillis", totalMillis,
+                        "pointsPotential", pointsPotential
+                    ).await()
+                } else {
+                    // If already collected, only update millis
+                    usageRef.update("totalMillis", totalMillis).await()
+                }
             } else {
                 // Create new record
                 val record = hashMapOf(
