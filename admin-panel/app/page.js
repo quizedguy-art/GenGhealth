@@ -49,6 +49,29 @@ export default function AdminDashboard() {
     return () => unsubscribeAuth();
   }, []);
 
+  useEffect(() => {
+    if (!user || !isAdmin) {
+      setLoading(false);
+      setUsageLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setUsageLoading(true);
+
+    const q = query(collection(db, "withdrawals"), orderBy("createdAt", "desc"));
+    const unsubscribeData = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setWithdrawals(docs);
+      setLoading(false);
+    }, (error) => {
+      console.error("Firestore error:", error);
+      setLoading(false);
+    });
+
     const qUsage = query(collection(db, "daily_usage"), orderBy("date", "desc"));
     const unsubscribeUsage = onSnapshot(qUsage, (snapshot) => {
       const docs = snapshot.docs.map(doc => ({
