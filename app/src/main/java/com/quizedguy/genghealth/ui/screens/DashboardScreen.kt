@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,6 +71,7 @@ fun DashboardScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val pointCreditEvent by pointsViewModel.pointCreditEvent.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showReferralPopup by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(pointCreditEvent) {
         pointCreditEvent?.let { amount ->
@@ -115,6 +117,29 @@ fun DashboardScreen(
             }
         )
     } else {
+        if (showReferralPopup) {
+            AlertDialog(
+                onDismissRequest = { showReferralPopup = false },
+                title = { Text("Refer & Earn 500 Pts!", fontWeight = FontWeight.Bold) },
+                text = { Text("Invite your friends to GenGhealth and you both get 500 bonus points when they join. Start earning today!") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showReferralPopup = false
+                            navController.navigate(Screen.Referrals.route)
+                        }
+                    ) {
+                        Text("Refer Now")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showReferralPopup = false }) {
+                        Text("Maybe Later")
+                    }
+                }
+            )
+        }
+
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { padding ->

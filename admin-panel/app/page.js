@@ -121,6 +121,21 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleReject = async (id) => {
+    if (confirm("Are you sure you want to reject this withdrawal request?")) {
+      try {
+        const docRef = doc(db, "withdrawals", id);
+        await updateDoc(docRef, {
+          status: 'Rejected',
+          processedAt: Date.now()
+        });
+        alert(`Success: Withdrawal request rejected`);
+      } catch (error) {
+        alert("Error rejecting withdrawal: " + error.message);
+      }
+    }
+  };
+
   const handleCreditPoints = async (record) => {
     const pointsToCredit = prompt(`Enter points to credit for ${record.userId} on ${record.date}:`, record.pointsPotential || 0);
     if (pointsToCredit !== null) {

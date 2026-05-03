@@ -29,18 +29,17 @@ class ReferralViewModel : ViewModel() {
 
         db.collection("referrals")
             .whereEqualTo("referrerId", userId)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
                 _isLoading.value = false
                 if (e != null) {
-                    Log.e("ReferralViewModel", "Error loading referrals (check indexes): ${e.message}")
+                    Log.e("ReferralViewModel", "Error loading referrals: ${e.message}")
                     return@addSnapshotListener
                 }
                 
                 if (snapshot != null) {
                     val list = snapshot.documents.mapNotNull { doc ->
                         doc.toObject(ReferralRecord::class.java)
-                    }
+                    }.sortedByDescending { it.timestamp }
                     _referrals.value = list
                 }
             }

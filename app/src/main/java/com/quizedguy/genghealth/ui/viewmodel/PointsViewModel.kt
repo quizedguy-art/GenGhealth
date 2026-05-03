@@ -53,14 +53,12 @@ class PointsViewModel : ViewModel() {
         usageListener?.remove()
         usageListener = db.collection("daily_usage")
             .whereEqualTo("userId", userId)
-            .orderBy("date", Query.Direction.DESCENDING)
-            .limit(10)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) return@addSnapshotListener
                 if (snapshot != null) {
                     val list = snapshot.documents.mapNotNull { doc ->
                         doc.toObject(DailyUsageRecord::class.java)?.copy(id = doc.id)
-                    }
+                    }.sortedByDescending { it.date }.take(10)
                     _dailyUsageHistory.value = list
                 }
             }
@@ -134,7 +132,6 @@ class PointsViewModel : ViewModel() {
         historyListener?.remove()
         historyListener = db.collection("withdrawals")
             .whereEqualTo("userId", userId)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) return@addSnapshotListener
                 if (snapshot != null) {
@@ -145,7 +142,7 @@ class PointsViewModel : ViewModel() {
                         } catch (e: Exception) {
                             null
                         }
-                    }
+                    }.sortedByDescending { it.createdAt }
                     _withdrawalHistory.value = list
                     calculateTotalEarned(list, _userPoints.value)
                 }

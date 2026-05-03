@@ -41,15 +41,7 @@ fun MainComposeApp() {
         mutableStateOf(!CompatibilityUtils.isGooglePlayServicesAvailable(context)) 
     }
 
-    var showReferralPopup by remember { mutableStateOf(false) }
-    
-    // Launch Effect to show Referral Popup once per session when logged in
-    LaunchedEffect(currentUser) {
-        if (currentUser != null) {
-            // In a real app, you might check if they've seen it recently via SharedPreferences/DataStore
-            showReferralPopup = true
-        }
-    }
+
     
     if (showCompatibilityAlert) {
         AlertDialog(
@@ -86,28 +78,7 @@ fun MainComposeApp() {
             }
         }
 
-        if (showReferralPopup) {
-            AlertDialog(
-                onDismissRequest = { showReferralPopup = false },
-                title = { Text("Refer & Earn 500 Pts!", fontWeight = FontWeight.Bold) },
-                text = { Text("Invite your friends to GenGhealth and you both get 500 bonus points when they join. Start earning today!") },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            showReferralPopup = false
-                            navController.navigate(Screen.Referrals.route)
-                        }
-                    ) {
-                        Text("Refer Now")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showReferralPopup = false }) {
-                        Text("Maybe Later")
-                    }
-                }
-            )
-        }
+
         
         Scaffold(
             bottomBar = {
