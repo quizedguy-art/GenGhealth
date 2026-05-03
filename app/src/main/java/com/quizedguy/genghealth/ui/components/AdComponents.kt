@@ -32,8 +32,6 @@ fun BannerAdView(modifier: Modifier = Modifier) {
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
                         Log.e("AdMob", "Ad failed to load: ${error.message} (Code: ${error.code})")
-                        // Show diagnostic Toast to help user understand why banner ads are missing
-                        Toast.makeText(context, "Banner Ad error: ${error.code}", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onAdOpened() {

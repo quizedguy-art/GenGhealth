@@ -70,10 +70,6 @@ object RewardedAdManager {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.e(TAG, "Ad failed to load: ${adError.message} (Code: ${adError.code})")
                 
-                // Show diagnostic Toast to help user understand why ads are missing
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(context, "Rewarded Ad error: ${adError.code}", Toast.LENGTH_SHORT).show()
-                }
                 rewardedAd = null
                 isLoading = false
                 _isAdLoaded.value = false
@@ -122,7 +118,7 @@ object RewardedAdManager {
         if (isAdAvailable()) {
             rewardedAd?.show(activity) { rewardItem ->
                 Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
-                creditPoints(10) // Fixed 10 points per ad
+                creditPoints(1) // Fixed 1 point per ad
                 onRewardEarned()
             }
         } else {

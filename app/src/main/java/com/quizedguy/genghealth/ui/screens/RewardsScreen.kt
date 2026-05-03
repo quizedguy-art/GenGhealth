@@ -38,6 +38,8 @@ fun RewardsScreen(
     val dailyUsage by pointsViewModel.dailyUsageHistory.collectAsState()
     val context = LocalContext.current
     
+    val withdrawalHistory by pointsViewModel.withdrawalHistory.collectAsState()
+    
     // Check if there are any uncollected points
     val hasUncollectedPoints = dailyUsage.any { !it.isCollected && it.pointsPotential > 0 }
     
@@ -108,6 +110,22 @@ fun RewardsScreen(
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        if (withdrawalHistory.isNotEmpty()) {
+            item {
+                Text(
+                    text = "My Rewards",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            items(withdrawalHistory) { request ->
+                IssuedRewardCard(request)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
 
         items(rewards) { reward ->
@@ -212,6 +230,51 @@ fun CollectionGatewayCard(hasPoints: Boolean, onClick: () -> Unit) {
                 contentDescription = null,
                 tint = if (hasPoints) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
+
+@Composable
+fun IssuedRewardCard(request: com.quizedguy.genghealth.ui.viewmodel.WithdrawalRequest) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "₹${request.amountRs} Reward", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onTertiaryContainer)
+                Text(text = request.status, style = MaterialTheme.typography.labelMedium, color = if (request.status == "Approved") Color(0xFF4CAF50) else MaterialTheme.colorScheme.onTertiaryContainer)
+            }
+            
+            if (request.status == "Approved" && !request.giftCardCode.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(text = "Gift Card Code:", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = request.giftCardCode,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            letterSpacing = 1.sp
+                        )
+                    }
+                }
+            } else if (request.status == "Pending") {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "We are reviewing your request. Your code will appear here shortly.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onTertiaryContainer)
+            }
         }
     }
 }

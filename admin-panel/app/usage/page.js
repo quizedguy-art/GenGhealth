@@ -1,0 +1,119 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { collection, onSnapshot, query, orderBy, doc, updateDoc, getDoc } from 'firebase/firestore';
+
+export default function UsageReviewPage() {
+  const [usageRecords, setUsageRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const qUsage = query(collection(db, "daily_usage"), orderBy("date", "desc"));
+    const unsubscribeUsage = onSnapshot(qUsage, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setUsageRecords(docs);
+      setLoading(false);
+    }, (error) => {
+      console.error("Usage fetch error:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribeUsage();
+  }, []);
+
+  const handleCreditPoints = async (record) => {
+    const pointsToCredit = prompt(`Enter points to credit for ${record.userId} on ${record.date}:`, record.pointsPotential || 0);
+    if (pointsToCredit !== null) {
+      const points = parseInt(pointsToCredit);
+      if (isNaN(points)) return alert("Invalid points value");
+
+      try {
+        const userRef = doc(db, "users", record.userId);
+        const userSnap = await getDoc(userRef);
+        const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+        
+        await updateDoc(userRef, {
+          points: currentPoints + points
+        });
+
+        const usageRef = doc(db, "daily_usage", record.id);
+        await updateDoc(usageRef, {
+          isCollected: true,
+          pointsPotential: points // Store the actual points credited
+        });
+
+        alert(`Successfully credited ${points} points to user.`);
+      } catch (error) {
+        alert("Error crediting points: " + error.message);
+      }
+    }
+  };
+
+  const formatUsage = (millis) => {
+    const hours = Math.floor(millis / 3600000);
+    const minutes = Math.floor((millis % 3600000) / 60000);
+    return `${hours}h ${minutes}m`;
+  };
+
+  return (
+    <div className="dashboard-page">
+      <div className="header">
+        <h1>Daily Usage Review</h1>
+      </div>
+
+      <div className="table-container">
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>Syncing Usage Data...</div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Usage Date</th>
+                <th>User ID</th>
+                <th>Screen Time</th>
+                <th>Suggested Points</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usageRecords.length === 0 ? (
+                <tr><td colSpan="6" style={{ textAlign: 'center', padding: '3rem' }}>No usage records found.</td></tr>
+              ) : (
+                usageRecords.map(r => (
+                  <tr key={r.id}>
+                    <td>{r.date}</td>
+                    <td><code style={{ fontSize: '0.8rem' }}>{r.userId}</code></td>
+                    <td style={{ fontWeight: 'bold', color: r.totalMillis > 7 * 3600000 ? '#ef4444' : '#10b981' }}>{formatUsage(r.totalMillis)}</td>
+                    <td>{r.pointsPotential} pts</td>
+                    <td>
+                      <span className={`badge-${r.isCollected ? 'approved' : 'pending'}`}>
+                        {r.isCollected ? 'Credited' : 'Pending Review'}
+                      </span>
+                    </td>
+                    <td>
+                      {!r.isCollected ? (
+                        <button 
+                          className="btn-approve" 
+                          onClick={() => handleCreditPoints(r)}
+                        >
+                          Credit Points
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Credited ✅</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
