@@ -20,6 +20,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Admin : Screen("admin", "Admin", Icons.Default.Settings)
     object Collection : Screen("collection", "History", Icons.Default.List)
     object Referrals : Screen("referrals", "Referrals", Icons.Default.CheckCircle)
+    object MyRewardsHistory : Screen("my_rewards_history", "My Rewards", Icons.Default.Star)
 }
 
 val bottomNavItems = listOf(

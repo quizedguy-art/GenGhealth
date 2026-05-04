@@ -15,14 +15,19 @@ class AdminViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    private val _withdrawalHistory = MutableStateFlow<List<WithdrawalRequest>>(emptyList())
+    val withdrawalHistory = _withdrawalHistory.asStateFlow()
+
+    private val _usageRecords = MutableStateFlow<List<DailyUsageRecord>>(emptyList())
+    val usageRecords = _usageRecords.asStateFlow()
+
     init {
-        loadPendingWithdrawals()
+        loadData()
     }
 
-    private fun loadPendingWithdrawals() {
+    private fun loadData() {
         _isLoading.value = true
         db.collection("withdrawals")
-            .whereEqualTo("status", "Pending")
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
                 _isLoading.value = false
@@ -35,7 +40,24 @@ class AdminViewModel : ViewModel() {
                             null
                         }
                     }
-                    _pendingWithdrawals.value = list
+                    _pendingWithdrawals.value = list.filter { it.status == "Pending" }
+                    _withdrawalHistory.value = list.filter { it.status != "Pending" }
+                }
+            }
+
+        db.collection("daily_usage")
+            .orderBy("date", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) return@addSnapshotListener
+                if (snapshot != null) {
+                    val list = snapshot.documents.mapNotNull { doc ->
+                        try {
+                            doc.toObject(DailyUsageRecord::class.java)?.copy(id = doc.id)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }
+                    _usageRecords.value = list
                 }
             }
     }
@@ -55,5 +77,21 @@ class AdminViewModel : ViewModel() {
                 "status" to "Rejected",
                 "processedAt" to System.currentTimeMillis()
             ))
+    }
+
+    fun creditUsagePoints(record: DailyUsageRecord, points: Int) {
+        // Update user points
+        db.collection("users").document(record.userId).get().addOnSuccessListener { userSnap ->
+            val currentPoints = userSnap.getLong("points") ?: 0L
+            db.collection("users").document(record.userId)
+                .update("points", currentPoints + points)
+            
+            // Mark usage as collected
+            db.collection("daily_usage").document(record.id)
+                .update(mapOf(
+                    "isCollected" to true,
+                    "pointsPotential" to points
+                ))
+        }
     }
 }

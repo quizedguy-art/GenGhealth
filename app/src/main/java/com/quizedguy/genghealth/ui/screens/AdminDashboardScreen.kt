@@ -29,54 +29,93 @@ fun AdminDashboardScreen(
     authViewModel: AuthViewModel = viewModel()
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    
     val pendingWithdrawals by viewModel.pendingWithdrawals.collectAsState()
+    val withdrawalHistory by viewModel.withdrawalHistory.collectAsState()
+    val usageRecords by viewModel.usageRecords.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
     var showApproveDialog by remember { mutableStateOf<WithdrawalRequest?>(null) }
     var giftCardCode by remember { mutableStateOf("") }
+    
+    var showCreditDialog by remember { mutableStateOf<com.quizedguy.genghealth.ui.viewmodel.DailyUsageRecord?>(null) }
+    var pointsToCredit by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-            Column {
-                Text(
-                    text = "Admin Dashboard",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp), 
+            horizontalArrangement = Arrangement.SpaceBetween, 
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Admin Panel",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
             IconButton(onClick = { showLogoutDialog = true }) {
                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Log Out", tint = MaterialTheme.colorScheme.error)
             }
         }
-        Text(
-            text = "Manage Pending Redemptions",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(24.dp))
+        
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            Tab(selected = selectedTabIndex == 0, onClick = { selectedTabIndex = 0 }, text = { Text("Requests") })
+            Tab(selected = selectedTabIndex == 1, onClick = { selectedTabIndex = 1 }, text = { Text("Usage") })
+            Tab(selected = selectedTabIndex == 2, onClick = { selectedTabIndex = 2 }, text = { Text("History") })
+        }
 
         if (isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
                 CircularProgressIndicator()
             }
-        } else if (pendingWithdrawals.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                Text("No pending requests!", style = MaterialTheme.typography.titleMedium)
-            }
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                item {
-                    BannerAdView(modifier = Modifier.padding(vertical = 8.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+                
+                when (selectedTabIndex) {
+                    0 -> { // Requests
+                        if (pendingWithdrawals.isEmpty()) {
+                            item { Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = androidx.compose.ui.Alignment.Center) { Text("No pending requests.") } }
+                        } else {
+                            items(pendingWithdrawals) { request ->
+                                WithdrawalRequestCard(
+                                    request = request,
+                                    onApprove = { showApproveDialog = request },
+                                    onReject = { viewModel.rejectRequest(request.id) }
+                                )
+                            }
+                        }
+                    }
+                    1 -> { // Usage
+                        if (usageRecords.isEmpty()) {
+                            item { Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = androidx.compose.ui.Alignment.Center) { Text("No usage records.") } }
+                        } else {
+                            items(usageRecords) { record ->
+                                UsageReviewCard(
+                                    record = record,
+                                    onCredit = { 
+                                        showCreditDialog = record
+                                        pointsToCredit = record.pointsPotential.toString()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    2 -> { // History
+                        if (withdrawalHistory.isEmpty()) {
+                            item { Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = androidx.compose.ui.Alignment.Center) { Text("No reward history.") } }
+                        } else {
+                            items(withdrawalHistory) { request ->
+                                IssuedRewardCard(request) // Reusing from MyRewardsHistoryScreen
+                            }
+                        }
+                    }
                 }
-                items(pendingWithdrawals) { request ->
-                    WithdrawalRequestCard(
-                        request = request,
-                        onApprove = { showApproveDialog = request },
-                        onReject = { viewModel.rejectRequest(request.id) }
-                    )
-                }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
             }
         }
     }
@@ -112,6 +151,46 @@ fun AdminDashboardScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showApproveDialog = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    
+    // Credit Points Dialog
+    if (showCreditDialog != null) {
+        AlertDialog(
+            onDismissRequest = { showCreditDialog = null },
+            title = { Text("Credit Points") },
+            text = {
+                Column {
+                    Text("Enter points to credit for usage on ${showCreditDialog?.date}")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = pointsToCredit,
+                        onValueChange = { pointsToCredit = it },
+                        label = { Text("Points") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val points = pointsToCredit.toIntOrNull()
+                        if (points != null) {
+                            viewModel.creditUsagePoints(showCreditDialog!!, points)
+                            showCreditDialog = null
+                            pointsToCredit = ""
+                        }
+                    },
+                    enabled = pointsToCredit.isNotBlank() && pointsToCredit.toIntOrNull() != null
+                ) {
+                    Text("Credit User")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCreditDialog = null }) {
                     Text("Cancel")
                 }
             }
@@ -177,6 +256,49 @@ fun WithdrawalRequestCard(
                 Button(onClick = onApprove) {
                     Text("Issue Code")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun UsageReviewCard(
+    record: com.quizedguy.genghealth.ui.viewmodel.DailyUsageRecord,
+    onCredit: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (record.isCollected) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = record.date, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = if (record.isCollected) "Credited" else "Pending Review",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (record.isCollected) Color(0xFF4CAF50) else MaterialTheme.colorScheme.secondary
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            val hours = java.util.concurrent.TimeUnit.MILLISECONDS.toHours(record.totalMillis)
+            val minutes = java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes(record.totalMillis) % 60
+            Text(text = "Screen Time: ${hours}h ${minutes}m", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "User UID: ${record.userId}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+            
+            if (!record.isCollected) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    Button(onClick = onCredit) {
+                        Text("Credit Points")
+                    }
+                }
+            } else {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Credited: ${record.pointsPotential} pts", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
             }
         }
     }

@@ -156,6 +156,7 @@ fun MainComposeApp() {
                         authViewModel = authViewModel
                     )
                 }
+                composable(Screen.MyRewardsHistory.route) { MyRewardsHistoryScreen(navController = navController) }
             }
         }
     }
