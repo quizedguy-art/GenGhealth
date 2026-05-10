@@ -118,7 +118,7 @@ object RewardedAdManager {
         if (isAdAvailable()) {
             rewardedAd?.show(activity) { rewardItem ->
                 Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
-                creditPoints(1) // Fixed 1 point per ad
+                creditPoints(3) // Fixed 3 points per ad
                 onRewardEarned()
             }
         } else {

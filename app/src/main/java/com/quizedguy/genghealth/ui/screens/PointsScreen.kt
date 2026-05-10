@@ -38,7 +38,7 @@ fun PointsScreen(viewModel: PointsViewModel = viewModel()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "$points Points", fontSize = 34.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        Text(text = "Equivalent to ₹${points / 10}", style = MaterialTheme.typography.bodyLarge)
+                        Text(text = "Collect points to get gift cards!", style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
@@ -72,7 +72,8 @@ fun WithdrawalHistoryItem(request: WithdrawalRequest) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = "Withdrawal ₹${request.amountRs}", fontWeight = FontWeight.Bold)
+                val rewardNameStr = if (request.rewardName.isNotEmpty()) request.rewardName else "Reward"
+                Text(text = "Withdrawal $${request.amountRs} ($rewardNameStr)", fontWeight = FontWeight.Bold)
                 val dateStr = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(request.createdAt))
                 Text(text = dateStr, style = MaterialTheme.typography.bodySmall)
             }

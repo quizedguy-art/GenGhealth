@@ -121,7 +121,7 @@ object RewardedInterstitialAdManager {
             lastShowTime = now
             rewardedInterstitialAd?.show(activity) { rewardItem ->
                 Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
-                creditPoints(10) // Fixed 10 points per ad
+                creditPoints(5) // Fixed 5 points per ad
                 onRewardEarned?.invoke()
             }
         } else {

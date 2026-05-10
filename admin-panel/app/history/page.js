@@ -59,7 +59,7 @@ export default function HistoryPage() {
                   <tr key={w.id}>
                     <td>{formatDate(w.processedAt || w.createdAt)}</td>
                     <td><code style={{ fontSize: '0.8rem' }}>{w.userId}</code></td>
-                    <td style={{ fontWeight: 'bold' }}>₹{w.amountRs}</td>
+                    <td style={{ fontWeight: 'bold' }}>${w.amountRs} {w.rewardName && <span style={{fontSize:'0.8rem', fontWeight:'normal'}}><br/>({w.rewardName})</span>}</td>
                     <td>
                       <span className={`badge-${w.status.toLowerCase()}`}>{w.status}</span>
                     </td>

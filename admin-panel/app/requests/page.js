@@ -91,7 +91,7 @@ export default function RequestsPage() {
                   <tr key={w.id}>
                     <td>{formatDate(w.createdAt)}</td>
                     <td><code style={{ fontSize: '0.8rem' }}>{w.userId}</code></td>
-                    <td style={{ fontWeight: 'bold' }}>₹{w.amountRs}</td>
+                    <td style={{ fontWeight: 'bold' }}>${w.amountRs} {w.rewardName && <span style={{fontSize:'0.8rem', fontWeight:'normal'}}><br/>({w.rewardName})</span>}</td>
                     <td>{w.pointsDeducted} pts</td>
                     <td>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>

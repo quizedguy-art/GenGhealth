@@ -51,8 +51,8 @@ export default function AdminDashboard() {
           <p>{pendingUsage}</p>
         </div>
         <div className="stat-card">
-          <h3>Total Approved ₹</h3>
-          <p>₹{approvedTotal}</p>
+          <h3>Total Approved $</h3>
+          <p>${approvedTotal}</p>
         </div>
         <div className="stat-card">
           <h3>Usage Credited Today</h3>

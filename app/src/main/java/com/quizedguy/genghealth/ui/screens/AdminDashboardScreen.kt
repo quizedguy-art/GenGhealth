@@ -127,7 +127,7 @@ fun AdminDashboardScreen(
             title = { Text("Issue Gift Card") },
             text = {
                 Column {
-                    Text("Enter the code for ₹${showApproveDialog?.amountRs} reward.")
+                    Text("Enter the code for $${showApproveDialog?.amountRs} ${showApproveDialog?.rewardName ?: "reward"}.")
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = giftCardCode,
@@ -236,7 +236,8 @@ fun WithdrawalRequestCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(text = "Amount: ₹${request.amountRs}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
+                    val rewardNameStr = if (request.rewardName.isNotEmpty()) request.rewardName else "Reward"
+                    Text(text = "Amount: $${request.amountRs} ($rewardNameStr)", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
                     Text(text = "Points: ${request.pointsDeducted}", style = MaterialTheme.typography.bodyMedium)
                 }
                 Text(

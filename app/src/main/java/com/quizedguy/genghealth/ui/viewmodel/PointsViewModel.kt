@@ -178,14 +178,14 @@ class PointsViewModel : ViewModel() {
             }
     }
 
-    fun requestWithdrawal(amountRs: Int) {
+    fun requestWithdrawal(amount: Int, requiredPoints: Int, rewardName: String) {
         val userId = auth.currentUser?.uid ?: return
-        val requiredPoints = amountRs * 10
         
         if (_userPoints.value >= 5000 && _userPoints.value >= requiredPoints) {
             val withdrawal = hashMapOf(
                 "userId" to userId,
-                "amountRs" to amountRs,
+                "amountRs" to amount,
+                "rewardName" to rewardName,
                 "pointsDeducted" to requiredPoints,
                 "status" to "Pending",
                 "createdAt" to System.currentTimeMillis()
@@ -211,6 +211,7 @@ data class WithdrawalRequest(
     val id: String = "",
     val userId: String = "",
     val amountRs: Int = 0,
+    val rewardName: String = "",
     val pointsDeducted: Int = 0,
     val status: String = "Pending",
     val createdAt: Long = 0,

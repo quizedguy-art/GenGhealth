@@ -45,10 +45,12 @@ fun RewardsScreen(
     val hasUncollectedPoints = dailyUsage.any { !it.isCollected && it.pointsPotential > 0 }
     
     val rewards = listOf(
-        RewardItem("Amazon Gift Card", "₹100 Voucher", 1000, 100),
-        RewardItem("Google Play Credits", "₹100 credits", 1000, 100),
-        RewardItem("Amazon Gift Card", "₹500 Voucher", 5000, 500),
-        RewardItem("Google Play Credits", "₹500 credits", 5000, 500)
+        RewardItem("Amazon Gift Card", "$3 Voucher", 400, 3),
+        RewardItem("Amazon Gift Card", "$5 Voucher", 500, 5),
+        RewardItem("PayPal Gift Card", "$3 Transfer", 400, 3),
+        RewardItem("PayPal Gift Card", "$5 Transfer", 500, 5),
+        RewardItem("Google Play Gift Card", "$3 credits", 400, 3),
+        RewardItem("Google Play Gift Card", "$5 credits", 500, 5)
     )
 
     LazyColumn(
@@ -125,7 +127,7 @@ fun RewardsScreen(
             RewardCard(
                 reward = reward, 
                 canAfford = userPoints >= 5000 && userPoints >= reward.points,
-                onClaim = { pointsViewModel.requestWithdrawal(reward.amountRs) }
+                onClaim = { pointsViewModel.requestWithdrawal(reward.amountRs, reward.points, reward.title) }
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
