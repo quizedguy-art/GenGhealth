@@ -235,7 +235,7 @@ fun RewardGoalsCard(currentMillis: Long) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text(text = "Earning Guidelines", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(text = "Points Guidelines", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(text = "Points are credited manually by Admin based on your daily usage.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(16.dp))
             

@@ -196,7 +196,7 @@ fun MainComposeApp() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Home.route) { 
-                    DashboardScreen(navController = navController) 
+                    DashboardScreen(navController = navController, viewModel = dashboardViewModel) 
                 }
                 composable(Screen.ScreenTime.route) { ScreenTimeScreen() }
                 composable(Screen.Rewards.route) { RewardsScreen(navController = navController) }
