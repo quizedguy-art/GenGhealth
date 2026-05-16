@@ -2,24 +2,23 @@ package com.quizedguy.genghealth.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Pinkish Purple Primary Palette
-val PrimaryPink = Color(0xFFD946EF) // Fuchsia
-val PrimaryPurple = Color(0xFFA855F7) // Purple
-val PrimaryTeal = Color(0xFF14B8A6) // Health accent
+// Vibrant Primary Palette
+val PrimaryIndigo = Color(0xFF6366F1)
+val PrimaryBlue = Color(0xFF3B82F6)
+val PrimaryTeal = Color(0xFF14B8A6)
+val PrimaryRose = Color(0xFFF43F5E)
 
-// Secondary & Accents
-val SecondaryMagenta = Color(0xFFEC4899)
-val SecondaryLilac = Color(0xFFC084FC)
-val SecondaryMint = Color(0xFF2DD4BF) // Health accent
+// Modern Gradients/Secondary
+val SecondaryViolet = Color(0xFF8B5CF6)
+val SecondarySky = Color(0xFF0EA5E9)
+val SecondaryEmerald = Color(0xFF10B981)
 
 // Neutral & Backgrounds
-val SoftBackground = Color(0xFFFDF4FF) // Very light fuchsia
-val DarkBackground = Color(0xFFC026D3) // Bright pinkish background
+val SoftBackground = Color(0xFFF8FAFC)
+val DarkBackground = Color(0xFF0F172A)
 val CardSurface = Color(0xFFFFFFFF)
-val DarkCardSurface = Color(0xFFD946EF) // Slightly lighter bright pink
-
-val TextPrimary = Color(0xFF3A1A3B)
-val TextSecondary = Color(0xFF867189)
+val TextPrimary = Color(0xFF1E293B)
+val TextSecondary = Color(0xFF64748B)
 
 // Success & Warning
 val SuccessGreen = Color(0xFF22C55E)

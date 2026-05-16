@@ -17,11 +17,11 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryPink,
-    secondary = SecondaryMagenta,
+    primary = PrimaryIndigo,
+    secondary = SecondaryViolet,
     tertiary = PrimaryTeal,
     background = DarkBackground,
-    surface = DarkCardSurface,
+    surface = DarkBackground,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
@@ -30,8 +30,8 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryPurple,
-    secondary = SecondaryLilac,
+    primary = PrimaryBlue,
+    secondary = SecondarySky,
     tertiary = PrimaryTeal,
     background = SoftBackground,
     surface = CardSurface,
@@ -45,7 +45,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun Geng_healthTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is disabled to enforce pinkish purple theme
+    // Dynamic color is disabled to enforce custom branding
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {

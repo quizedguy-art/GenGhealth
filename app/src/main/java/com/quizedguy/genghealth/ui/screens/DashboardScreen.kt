@@ -50,25 +50,8 @@ fun DashboardScreen(
     pointsViewModel: PointsViewModel = viewModel()
 ) {
     val screenTime by viewModel.screenTimeMillis.collectAsState()
-    val hasUsagePermission by viewModel.hasPermission.collectAsState()
     val userPoints by pointsViewModel.userPoints.collectAsState()
-    val context = LocalContext.current
     
-    var hasNotificationPermission by remember {
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-            } else true
-        )
-    }
-
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasNotificationPermission = isGranted
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
     val pointCreditEvent by pointsViewModel.pointCreditEvent.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showReferralPopup by rememberSaveable { mutableStateOf(true) }
@@ -79,44 +62,6 @@ fun DashboardScreen(
             pointsViewModel.clearPointCreditEvent()
         }
     }
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.checkPermission()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    hasNotificationPermission = ContextCompat.checkSelfPermission(
-                        context, 
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.checkPermission()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
-            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-
-    if (!hasUsagePermission || !hasNotificationPermission) {
-        PermissionRequiredScreen(
-            hasUsage = hasUsagePermission,
-            hasNotification = hasNotificationPermission,
-            onRequestUsage = { context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) },
-            onRequestNotification = {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
-        )
-    } else {
         if (showReferralPopup) {
             AlertDialog(
                 onDismissRequest = { showReferralPopup = false },
@@ -202,7 +147,6 @@ fun DashboardScreen(
                 }
             }
         }
-    }
 }
 
 @Composable
