@@ -14,9 +14,9 @@ val SecondaryMint = Color(0xFF2DD4BF) // Health accent
 
 // Neutral & Backgrounds
 val SoftBackground = Color(0xFFFDF4FF) // Very light fuchsia
-val DarkBackground = Color(0xFF2D132C) // Deep pinkish purple background
+val DarkBackground = Color(0xFFC026D3) // Bright pinkish background
 val CardSurface = Color(0xFFFFFFFF)
-val DarkCardSurface = Color(0xFF3F1D3E) // Surface for dark mode
+val DarkCardSurface = Color(0xFFD946EF) // Slightly lighter bright pink
 
 val TextPrimary = Color(0xFF3A1A3B)
 val TextSecondary = Color(0xFF867189)

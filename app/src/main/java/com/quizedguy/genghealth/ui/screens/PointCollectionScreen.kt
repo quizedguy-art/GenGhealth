@@ -198,14 +198,19 @@ fun WeeklyUsageGraph(usageHistory: List<DailyUsageRecord>) {
                         modifier = Modifier.fillMaxHeight()
                     ) {
                         Box(
-                            modifier = Modifier
-                                .width(28.dp)
-                                .fillMaxHeight(heightRatio)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = if (record.isCollected) 0.5f else 1f),
-                                    shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
-                                )
-                        )
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .width(28.dp)
+                                    .fillMaxHeight(heightRatio)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary.copy(alpha = if (record.isCollected) 0.5f else 1f),
+                                        shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
+                                    )
+                            )
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = record.date.takeLast(2),
