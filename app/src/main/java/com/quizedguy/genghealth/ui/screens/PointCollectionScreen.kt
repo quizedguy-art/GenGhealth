@@ -59,8 +59,9 @@ fun PointCollectionScreen(
             item {
                 InfoCard()
                 Spacer(modifier = Modifier.height(24.dp))
+                WeeklyUsageGraph(usageHistory = dailyUsage)
                 Text(
-                    text = "Usage History",
+                    text = "Daily Usage",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -160,4 +161,60 @@ private fun formatDuration(millis: Long): String {
     val hours = TimeUnit.MILLISECONDS.toHours(millis)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
     return "Usage: ${hours}h ${minutes}m"
+}
+
+@Composable
+fun WeeklyUsageGraph(usageHistory: List<DailyUsageRecord>) {
+    if (usageHistory.isEmpty()) return
+
+    val weeklyData = usageHistory.take(7).reversed()
+    val maxUsage = weeklyData.maxOfOrNull { it.totalMillis }?.coerceAtLeast(1) ?: 1
+
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Weekly Overview", 
+                style = MaterialTheme.typography.titleMedium, 
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth().height(120.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                weeklyData.forEach { record ->
+                    val heightRatio = (record.totalMillis.toFloat() / maxUsage.toFloat()).coerceIn(0.05f, 1f)
+                    
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier.fillMaxHeight()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(28.dp)
+                                .fillMaxHeight(heightRatio)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = if (record.isCollected) 0.5f else 1f),
+                                    shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
+                                )
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = record.date.takeLast(2),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

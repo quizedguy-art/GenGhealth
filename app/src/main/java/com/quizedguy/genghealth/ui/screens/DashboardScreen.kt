@@ -358,6 +358,29 @@ fun PermissionRequiredScreen(
     onRequestUsage: () -> Unit,
     onRequestNotification: () -> Unit
 ) {
+    var showUsageDisclosure by rememberSaveable { mutableStateOf(false) }
+
+    if (showUsageDisclosure) {
+        AlertDialog(
+            onDismissRequest = { showUsageDisclosure = false },
+            title = { Text("Data Usage Disclosure", fontWeight = FontWeight.Bold) },
+            text = { Text("GenGhealth needs access to your App Usage data to track your screen time and calculate your focus hours. This data never leaves your device and is only used to reward your healthy digital habits.") },
+            confirmButton = {
+                Button(onClick = {
+                    showUsageDisclosure = false
+                    onRequestUsage()
+                }) {
+                    Text("I Agree")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showUsageDisclosure = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -376,7 +399,7 @@ fun PermissionRequiredScreen(
         Spacer(modifier = Modifier.height(24.dp))
         
         if (!hasUsage) {
-            Button(onClick = onRequestUsage, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { showUsageDisclosure = true }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Grant Usage Access")
             }
             Spacer(modifier = Modifier.height(8.dp))
