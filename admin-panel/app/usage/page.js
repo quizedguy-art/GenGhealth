@@ -59,6 +59,15 @@ export default function UsageReviewPage() {
     return `${hours}h ${minutes}m`;
   };
 
+  const getTodayDateString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const todayStr = getTodayDateString();
+
   return (
     <div className="dashboard-page">
       <div className="header">
@@ -97,12 +106,16 @@ export default function UsageReviewPage() {
                     </td>
                     <td>
                       {!r.isCollected ? (
-                        <button 
-                          className="btn-approve" 
-                          onClick={() => handleCreditPoints(r)}
-                        >
-                          Credit Points
-                        </button>
+                        r.date === todayStr ? (
+                          <span style={{ fontSize: '0.8rem', color: '#f59e0b', fontWeight: 'bold' }}>Tracking in Progress</span>
+                        ) : (
+                          <button 
+                            className="btn-approve" 
+                            onClick={() => handleCreditPoints(r)}
+                          >
+                            Credit Points
+                          </button>
+                        )
                       ) : (
                         <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Credited ✅</span>
                       )}

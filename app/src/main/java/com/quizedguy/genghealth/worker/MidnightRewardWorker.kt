@@ -31,14 +31,9 @@ class MidnightRewardWorker(
         val db = FirebaseFirestore.getInstance()
 
         try {
-            // 1. Check if already rewarded today
+            // Continue even if it ran before, to ensure we get final data
             val userDoc = db.collection("users").document(userId).get().await()
             val lastRewardDate = userDoc.getString("lastRewardDate")
-
-            if (lastRewardDate == today) {
-                Log.d("MidnightReward", "Already rewarded today ($today). Skipping.")
-                return Result.success()
-            }
 
             // 2. Calculate today's usage and points
             val totalMillis = UsageStatsHelper.getTodayTotalScreenTime(applicationContext)
@@ -78,11 +73,12 @@ class MidnightRewardWorker(
                 .update("lastRewardDate", today)
                 .await()
 
-            if (pointsPotential > 0) {
+            // Only send notification if it's the first time today
+            if (pointsPotential > 0 && lastRewardDate != today) {
                 Log.d("MidnightReward", "Successfully created record for $pointsPotential potential points for $today.")
                 sendNotification()
             } else {
-                Log.d("MidnightReward", "No points potential today ($today).")
+                Log.d("MidnightReward", "Points potential today ($today) updated.")
             }
 
         } catch (e: Exception) {

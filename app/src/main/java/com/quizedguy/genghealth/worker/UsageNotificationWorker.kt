@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import android.util.Log
+import java.time.LocalDate
 
 class UsageNotificationWorker(
     appContext: Context,
@@ -32,6 +33,9 @@ class UsageNotificationWorker(
 
         // Point Credit Check
         checkPointCredits()
+
+        // Sync usage to Firestore every 15 minutes
+        syncUsageToFirestore(totalMillis)
 
         return Result.success()
     }
@@ -57,6 +61,50 @@ class UsageNotificationWorker(
             }
         } catch (e: Exception) {
             Log.e("UsageWorker", "Error checking points: ${e.message}")
+        }
+    }
+
+    private suspend fun syncUsageToFirestore(totalMillis: Long) {
+        val today = LocalDate.now().toString()
+        val auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        try {
+            val hours = totalMillis / 3600000.0
+            val pointsPotential = when {
+                hours < 5 -> 200
+                hours < 6 -> 100
+                hours < 7 -> 50
+                else -> 0
+            }
+
+            val docId = "${userId}_$today"
+            val usageRef = db.collection("daily_usage").document(docId)
+            val usageSnapshot = usageRef.get().await()
+
+            if (usageSnapshot.exists()) {
+                val isCollected = usageSnapshot.getBoolean("isCollected") ?: false
+                if (!isCollected) {
+                    usageRef.update(
+                        "totalMillis", totalMillis,
+                        "pointsPotential", pointsPotential
+                    ).await()
+                } else {
+                    usageRef.update("totalMillis", totalMillis).await()
+                }
+            } else {
+                val record = hashMapOf(
+                    "userId" to userId,
+                    "date" to today,
+                    "totalMillis" to totalMillis,
+                    "pointsPotential" to pointsPotential,
+                    "isCollected" to false
+                )
+                usageRef.set(record).await()
+            }
+        } catch (e: Exception) {
+            Log.e("UsageWorker", "Error syncing usage: ${e.message}")
         }
     }
 
