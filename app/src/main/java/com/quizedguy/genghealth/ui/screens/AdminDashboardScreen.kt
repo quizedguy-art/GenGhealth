@@ -267,6 +267,7 @@ fun UsageReviewCard(
     record: com.quizedguy.genghealth.ui.viewmodel.DailyUsageRecord,
     onCredit: () -> Unit
 ) {
+    val todayStr = remember { java.time.LocalDate.now().toString() }
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -293,8 +294,17 @@ fun UsageReviewCard(
             if (!record.isCollected) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    Button(onClick = onCredit) {
-                        Text("Credit Points")
+                    if (record.date == todayStr) {
+                        Text(
+                            text = "Tracking in Progress",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color(0xFFF59E0B),
+                            fontWeight = FontWeight.Bold
+                        )
+                    } else {
+                        Button(onClick = onCredit) {
+                            Text("Credit Points")
+                        }
                     }
                 }
             } else {
