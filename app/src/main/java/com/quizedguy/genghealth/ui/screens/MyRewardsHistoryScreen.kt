@@ -49,58 +49,64 @@ fun MyRewardsHistoryScreen(
             )
         }
     ) { padding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 16.dp)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                BannerAdView(modifier = Modifier.padding(bottom = 24.dp))
-                
-                Text(
-                    text = "History & Codes",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "All your claimed gift cards in one place",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            if (withdrawalHistory.isEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(top = 48.dp), contentAlignment = Alignment.Center) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                modifier = Modifier.size(64.dp),
-                                tint = Color.LightGray.copy(alpha = 0.5f)
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "No rewards requested yet.", 
-                                color = Color.Gray,
-                                fontWeight = FontWeight.Medium
-                            )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "History & Codes",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "All your claimed gift cards in one place",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+                if (withdrawalHistory.isEmpty()) {
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth().padding(top = 48.dp), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = Color.LightGray.copy(alpha = 0.5f)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "No rewards requested yet.", 
+                                    color = Color.Gray,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     }
-                }
-            } else {
-                items(withdrawalHistory) { request ->
-                    IssuedRewardCard(request)
-                }
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
+                } else {
+                    items(withdrawalHistory) { request ->
+                        IssuedRewardCard(request)
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                 }
             }
+            
+            BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
         }
     }
 }

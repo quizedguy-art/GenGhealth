@@ -29,8 +29,6 @@ class GengHealthApplication : Application() {
             
             // Initial ad fetches only after SDK is ready
             appOpenAdManager.fetchAd()
-            RewardedAdManager.loadAd(this)
-            RewardedInterstitialAdManager.loadAd(this)
         }
 
         // Schedule Workers

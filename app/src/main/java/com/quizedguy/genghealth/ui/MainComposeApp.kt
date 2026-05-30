@@ -133,17 +133,16 @@ fun MainComposeApp() {
         // Only initialize NavController when logged in to avoid cross-session state issues
         val navController = rememberNavController()
         
-        // Show Rewarded Interstitial Ad on every page change
+
+        // Show Rewarded Interstitial Ad when transitioning to the Rewards Screen
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        LaunchedEffect(navBackStackEntry) {
-            if (context is Activity && currentUser != null) {
-                // We show it on destination change, but the manager has a 60s cooldown built-in
+        val currentRoute = navBackStackEntry?.destination?.route
+        LaunchedEffect(currentRoute) {
+            if (context is Activity && currentUser != null && currentRoute == Screen.Rewards.route) {
                 RewardedInterstitialAdManager.showAd(context)
             }
         }
 
-
-        
         Scaffold(
             bottomBar = {
                 val currentBottomItems = remember(isAdmin) {

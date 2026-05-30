@@ -52,89 +52,91 @@ fun RewardsScreen(
         RewardItem("Google Play Gift Card", "$3 credits", 800, 3),
         RewardItem("Google Play Gift Card", "$5 credits", 1200, 5)
     )
-
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
     ) {
-        item {
-            Text(
-                text = "Redeem Rewards",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = "Turn your screen time into real value",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            BannerAdView(modifier = Modifier.padding(vertical = 8.dp))
-        }
-
-        item {
-            BalanceCard(points = userPoints)
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Box(modifier = Modifier.weight(1f)) {
-                    CollectionGatewayCard(
-                        hasPoints = hasUncollectedPoints,
-                        onClick = { navController.navigate(Screen.Collection.route) }
-                    )
-                }
-                Box(modifier = Modifier.weight(1f)) {
-                    RewardHistoryGatewayCard(
-                        onClick = { navController.navigate(Screen.MyRewardsHistory.route) }
-                    )
-                }
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            item {
+                Text(
+                    text = "Redeem Rewards",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Turn your screen time into real value",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(24.dp))
             }
-        }
-            
-        item {
-            if (userPoints < 5000) {
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "💡 Earn at least 5,000 points to unlock rewards. You need ${5000 - userPoints} more points.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onErrorContainer
+
+            item {
+                BalanceCard(points = userPoints)
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        CollectionGatewayCard(
+                            hasPoints = hasUncollectedPoints,
+                            onClick = { navController.navigate(Screen.Collection.route) }
+                        )
+                    }
+                    Box(modifier = Modifier.weight(1f)) {
+                        RewardHistoryGatewayCard(
+                            onClick = { navController.navigate(Screen.MyRewardsHistory.route) }
                         )
                     }
                 }
             }
-            
-            Text(
-                text = "Available Rewards",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+                
+            item {
+                if (userPoints < 5000) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "💡 Earn at least 5,000 points to unlock rewards. You need ${5000 - userPoints} more points. (Note: We will remove this threshold soon!)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
+                    }
+                }
+                
+                Text(
+                    text = "Available Rewards",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-        items(rewards) { reward ->
-            RewardCard(
-                reward = reward, 
-                canAfford = userPoints >= 5000 && userPoints >= reward.points,
-                onClaim = { pointsViewModel.requestWithdrawal(reward.amountRs, reward.points, reward.title) }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            items(rewards) { reward ->
+                RewardCard(
+                    reward = reward, 
+                    canAfford = userPoints >= 5000 && userPoints >= reward.points,
+                    onClaim = { pointsViewModel.requestWithdrawal(reward.amountRs, reward.points, reward.title) }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
-
-        item {
-            BannerAdView(modifier = Modifier.padding(vertical = 16.dp))
-        }
+        
+        BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
     }
 }
 

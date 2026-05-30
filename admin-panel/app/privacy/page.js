@@ -2,45 +2,315 @@ import './privacy.css';
 
 export const metadata = {
   title: 'Privacy Policy - GenGhealth',
-  description: 'How we protect your data at GenGhealth',
+  description: 'GenGhealth Privacy Policy — how we collect, use, and protect your data.',
 };
 
 export default function PrivacyPage() {
   return (
-    <div className="privacy-container">
-      <h1>Privacy Policy for GenGhealth</h1>
-      <p className="last-updated">Last Updated: March 29, 2026</p>
+    <div className="privacy-page">
+      {/* Header */}
+      <div className="privacy-header">
+        <div className="privacy-header-inner">
+          <div className="privacy-logo">🌿</div>
+          <h1>Privacy Policy</h1>
+          <p className="privacy-subtitle">GenGhealth — Health Rewards App</p>
+          <span className="privacy-badge">Last Updated: May 18, 2026</span>
+        </div>
+      </div>
 
-      <section>
-        <h2>1. Information We Collect</h2>
-        <p><strong>Screen Usage Data:</strong> We track your screen time and usage statistics locally on your device. This data is used solely to calculate rewards and is <strong>never</strong> uploaded to our servers.</p>
-        <p><strong>Personal Information:</strong> We collect your name and email address during registration to manage your account and process reward redemptions.</p>
-      </section>
+      {/* Content */}
+      <div className="privacy-container">
 
-      <section>
-        <h2>2. How We Use Information</h2>
-        <ul>
-          <li>To monitor screen time for reward eligibility.</li>
-          <li>To process withdrawal requests for gift cards/vouchers.</li>
-          <li>To provide support via quizedguy@gmail.com.</li>
-        </ul>
-      </section>
+        {/* Intro */}
+        <div className="privacy-intro">
+          <p>
+            At <strong>GenGhealth</strong>, your privacy is our priority. This policy explains exactly
+            what data we collect, why we collect it, how it is used, and how it is protected.
+            By using the GenGhealth app, you agree to the practices described in this policy.
+          </p>
+        </div>
 
-      <section>
-        <h2>3. Advertisements (AdMob)</h2>
-        <p>We use Google AdMob to serve advertisements. AdMob may collect and use data about your device and ad interactions to provide interest-based advertising. You can manage your ad preferences in your Google Account settings.</p>
-      </section>
+        {/* Quick Summary Cards */}
+        <div className="summary-grid">
+          <div className="summary-card safe">
+            <span className="summary-icon">🔒</span>
+            <p>No individual app data is ever tracked</p>
+          </div>
+          <div className="summary-card safe">
+            <span className="summary-icon">📵</span>
+            <p>Your data is never sold to third parties</p>
+          </div>
+          <div className="summary-card safe">
+            <span className="summary-icon">✅</span>
+            <p>Full disclosure before any permission is requested</p>
+          </div>
+          <div className="summary-card warning">
+            <span className="summary-icon">📢</span>
+            <p>Google AdMob may collect advertising identifiers</p>
+          </div>
+        </div>
 
-      <section>
-        <h2>4. Data Security</h2>
-        <p>Your authentication data is secured by Firebase Auth, and your points/redemption history is protected in our private Firestore database. We do not share your personal information with third parties.</p>
-      </section>
+        {/* Section 1 */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">01</span>
+            <h2>Information We Collect</h2>
+          </div>
+          <div className="section-body">
+            <div className="info-block">
+              <h3>📱 Screen Time Data (Usage Statistics)</h3>
+              <p>
+                GenGhealth uses Android's <code>PACKAGE_USAGE_STATS</code> permission to measure your
+                <strong> total daily phone screen time</strong> in milliseconds. This is used solely to
+                determine if you have met your daily health goals (under 5h, 6h, or 7h thresholds).
+              </p>
+              <ul>
+                <li>Only the <strong>total usage duration</strong> is processed — never which specific apps you use.</li>
+                <li>This aggregated total (in milliseconds) is synced to our secure Firebase servers to track your daily health goal progress.</li>
+                <li>No individual app names, app usage breakdowns, or browsing activity are ever collected or transmitted.</li>
+              </ul>
+            </div>
 
-      <section>
-        <h2>5. Contact Us</h2>
-        <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-        <p><strong>Email:</strong> quizedguy@gmail.com</p>
-      </section>
+            <div className="info-block">
+              <h3>👤 Personal Account Information</h3>
+              <p>When you register, we collect:</p>
+              <ul>
+                <li><strong>Email address</strong> — for account creation, login, and reward processing.</li>
+                <li><strong>Display name</strong> — shown within the app on your profile.</li>
+                <li><strong>User ID</strong> — a unique identifier generated by Firebase Authentication.</li>
+              </ul>
+            </div>
+
+            <div className="info-block">
+              <h3>🏆 Reward & Transaction Data</h3>
+              <p>To operate the rewards system, we store:</p>
+              <ul>
+                <li>Daily health goal records (date, total screen time in ms, points earned)</li>
+                <li>Reward withdrawal requests (reward type, points deducted, status)</li>
+                <li>Referral relationships (who referred whom, bonus points)</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2 */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">02</span>
+            <h2>How We Use Your Information</h2>
+          </div>
+          <div className="section-body">
+            <div className="use-case-grid">
+              <div className="use-case">
+                <span>📊</span>
+                <p>Calculate daily screen time health goals and award wellness points</p>
+              </div>
+              <div className="use-case">
+                <span>🔔</span>
+                <p>Send health-based notifications when you approach screen time thresholds</p>
+              </div>
+              <div className="use-case">
+                <span>🎁</span>
+                <p>Process and track your reward redemption requests</p>
+              </div>
+              <div className="use-case">
+                <span>👥</span>
+                <p>Manage referral relationships and bonus points</p>
+              </div>
+              <div className="use-case">
+                <span>🛡️</span>
+                <p>Maintain account security and prevent fraudulent activity</p>
+              </div>
+              <div className="use-case">
+                <span>📧</span>
+                <p>Respond to support requests sent to quizedguy@gmail.com</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 3 — PACKAGE_USAGE_STATS */}
+        <section className="privacy-section highlight-section">
+          <div className="section-header">
+            <span className="section-number">03</span>
+            <h2>App Usage Statistics Permission</h2>
+          </div>
+          <div className="section-body">
+            <div className="permission-box">
+              <div className="permission-title">
+                <code>PACKAGE_USAGE_STATS</code>
+                <span className="badge-sensitive">Sensitive Permission</span>
+              </div>
+              <p>
+                GenGhealth requests the <strong>App Usage Access</strong> permission on Android. Here is
+                exactly what this means for your privacy:
+              </p>
+              <div className="permission-table">
+                <div className="perm-row yes">
+                  <span className="perm-icon">✅</span>
+                  <div>
+                    <strong>What we DO access:</strong> Total screen-on duration across all apps for the current day (a single number in milliseconds).
+                  </div>
+                </div>
+                <div className="perm-row no">
+                  <span className="perm-icon">❌</span>
+                  <div>
+                    <strong>What we do NOT access:</strong> Which specific apps you use, how long you spend in each app, your browsing history, or any app content.
+                  </div>
+                </div>
+                <div className="perm-row no">
+                  <span className="perm-icon">❌</span>
+                  <div>
+                    <strong>We do NOT:</strong> Sell, share, or disclose your usage data to any third party for advertising, analytics, or any other purpose.
+                  </div>
+                </div>
+              </div>
+              <p className="perm-note">
+                A full disclosure dialog is displayed within the app before this permission is ever requested. You can revoke this permission at any time in your Android Settings → Apps → Special App Access → Usage Access.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4 — Third-party */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">04</span>
+            <h2>Third-Party Services</h2>
+          </div>
+          <div className="section-body">
+            <div className="third-party-card">
+              <div className="tp-header">
+                <span>🔥</span>
+                <h3>Google Firebase</h3>
+              </div>
+              <p>We use Firebase Authentication, Firestore, and Firebase Hosting.</p>
+              <ul>
+                <li>Firebase stores your account data, usage records, and reward history securely.</li>
+                <li>All data in transit is encrypted using TLS/HTTPS.</li>
+                <li>Firebase data is stored in Google's secure cloud infrastructure.</li>
+              </ul>
+              <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer" className="tp-link">
+                Firebase Privacy Policy →
+              </a>
+            </div>
+
+            <div className="third-party-card admob">
+              <div className="tp-header">
+                <span>📢</span>
+                <h3>Google AdMob</h3>
+              </div>
+              <p>We use Google AdMob to display advertisements within the app.</p>
+              <ul>
+                <li>AdMob may collect your <strong>Advertising ID</strong> to serve personalized or non-personalized ads.</li>
+                <li>AdMob may use device information and ad interaction data for interest-based advertising.</li>
+                <li>You can opt out of personalized ads in your Google Account settings or your device's Ad Settings.</li>
+              </ul>
+              <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="tp-link">
+                Google Ads Privacy Policy →
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5 — Data Security */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">05</span>
+            <h2>Data Security & Retention</h2>
+          </div>
+          <div className="section-body">
+            <ul>
+              <li>All data is encrypted in transit using industry-standard <strong>TLS encryption</strong>.</li>
+              <li>Firestore security rules ensure only authenticated users can access their own data.</li>
+              <li>We retain your account data for as long as your account is active.</li>
+              <li>Daily usage records are retained for up to <strong>30 days</strong> for goal tracking purposes.</li>
+              <li>You may request deletion of all your data at any time by contacting us.</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Section 6 — User Rights */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">06</span>
+            <h2>Your Rights & Data Deletion</h2>
+          </div>
+          <div className="section-body">
+            <p>You have the right to:</p>
+            <ul>
+              <li><strong>Access</strong> — Request a copy of the data we hold about you.</li>
+              <li><strong>Correction</strong> — Request correction of inaccurate data.</li>
+              <li><strong>Deletion</strong> — Request that all your personal data be permanently deleted.</li>
+              <li><strong>Withdraw consent</strong> — Revoke the Usage Access permission at any time via Android Settings.</li>
+            </ul>
+            <p>To exercise any of these rights, contact us at <strong>quizedguy@gmail.com</strong> with the subject line <em>"Data Request - GenGhealth"</em>. We will respond within <strong>7 business days</strong>.</p>
+          </div>
+        </section>
+
+        {/* Section 7 — Children */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">07</span>
+            <h2>Children's Privacy</h2>
+          </div>
+          <div className="section-body">
+            <p>
+              GenGhealth is not directed at children under the age of 13. We do not knowingly collect
+              personal information from children under 13. If you believe a child under 13 has provided
+              us with personal information, please contact us immediately at <strong>quizedguy@gmail.com</strong>.
+            </p>
+          </div>
+        </section>
+
+        {/* Section 8 — Changes */}
+        <section className="privacy-section">
+          <div className="section-header">
+            <span className="section-number">08</span>
+            <h2>Changes to This Policy</h2>
+          </div>
+          <div className="section-body">
+            <p>
+              We may update this Privacy Policy from time to time. When we do, we will update the
+              "Last Updated" date at the top of this page. Continued use of the app after changes
+              are posted constitutes your acceptance of the updated policy.
+            </p>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <div className="privacy-contact">
+          <h2>📬 Contact Us</h2>
+          <p>If you have any questions about this Privacy Policy, please reach out:</p>
+          <div className="contact-details">
+            <div className="contact-item">
+              <span>📧</span>
+              <div>
+                <strong>Email</strong>
+                <a href="mailto:quizedguy@gmail.com">quizedguy@gmail.com</a>
+              </div>
+            </div>
+            <div className="contact-item">
+              <span>📱</span>
+              <div>
+                <strong>App</strong>
+                <span>GenGhealth — Health Rewards</span>
+              </div>
+            </div>
+            <div className="contact-item">
+              <span>🏢</span>
+              <div>
+                <strong>Developer</strong>
+                <span>QuizedGuy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="privacy-footer-note">
+          This privacy policy is effective as of May 18, 2026 and applies to all users of the GenGhealth Android application.
+        </p>
+      </div>
     </div>
   );
 }

@@ -88,63 +88,67 @@ fun DashboardScreen(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { padding ->
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
             ) {
-                // Creative Header with Points
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.app_logo),
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "GenGhealth Home",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Creative Header with Points
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.app_logo),
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = "GenGhealth Home",
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    // Points Card
+                    item {
+                        PointsHeader(points = userPoints, onRedeemClick = { 
+                            navController.navigate(Screen.Rewards.route)
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Refer & Earn Card
+                    item {
+                        ReferAndEarnCard(onReferClick = {
+                            navController.navigate(Screen.Referrals.route)
+                        })
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        UsageTimer(time = viewModel.formatTime(screenTime))
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
+
+                    item {
+                        RewardGoalsCard(currentMillis = screenTime)
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
-
-                item {
-                    BannerAdView(modifier = Modifier.padding(vertical = 8.dp))
-                }
-
-                // Points Card
-                item {
-                    PointsHeader(points = userPoints, onRedeemClick = { 
-                        navController.navigate(Screen.Rewards.route)
-                    })
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                // Refer & Earn Card
-                item {
-                    ReferAndEarnCard(onReferClick = {
-                        navController.navigate(Screen.Referrals.route)
-                    })
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-
-                item {
-                    UsageTimer(time = viewModel.formatTime(screenTime))
-                    Spacer(modifier = Modifier.height(32.dp))
-                }
-
-                item {
-                    RewardGoalsCard(currentMillis = screenTime)
-                }
                 
-                item {
-                    BannerAdView(modifier = Modifier.padding(vertical = 16.dp))
-                }
+                BannerAdView(modifier = Modifier.padding(vertical = 8.dp))
             }
         }
 }

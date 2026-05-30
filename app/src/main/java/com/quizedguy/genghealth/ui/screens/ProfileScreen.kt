@@ -47,108 +47,112 @@ fun ProfileScreen(
     val gradient = Brush.verticalGradient(
         colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)
     )
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 32.dp)
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Creative Header
-        item {
-            HeaderSection(name = userName ?: "User", email = currentUser?.email ?: "", gradient = gradient)
-        }
-
-        // Stats Section
-        item {
-            Row(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                StatCard(
-                    title = "Lifetime Earned",
-                    value = "$totalEarned",
-                    icon = Icons.Default.Star,
-                    modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.primaryContainer
-                )
-                StatCard(
-                    title = "Current Balance",
-                    value = "$currentBalance",
-                    icon = Icons.Default.CheckCircle,
-                    modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.secondaryContainer
-                )
+        LazyColumn(
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            // Creative Header
+            item {
+                HeaderSection(name = userName ?: "User", email = currentUser?.email ?: "", gradient = gradient)
             }
-        }
 
-        // Action Menu
-        item {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(
-                    text = "Account Actions",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                
-                ActionItem(
-                    title = "Transaction History",
-                    subtitle = "View all your past redemptions",
-                    icon = Icons.Default.List,
-                    onClick = { navController.navigate(Screen.Points.route) }
-                )
-
-                ActionItem(
-                    title = "My Referrals",
-                    subtitle = "Refer friends & earn 500 points",
-                    icon = Icons.Default.Face,
-                    onClick = { navController.navigate(Screen.Referrals.route) }
-                )
-                
-                ActionItem(
-                    title = "Privacy Policy",
-                    subtitle = "How we protect your data",
-                    icon = Icons.Default.Info,
-                    onClick = { isPrivacyExpanded = !isPrivacyExpanded },
-                    trailingIcon = if (isPrivacyExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
-                )
-
-                AnimatedVisibility(visible = isPrivacyExpanded) {
-                    PrivacyPolicySection()
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                val supportContext = LocalContext.current
-                ActionItem(
-                    title = "Contact Support",
-                    subtitle = "Get help at quizedguy@gmail.com",
-                    icon = Icons.Default.Email,
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:quizedguy@gmail.com")
-                            putExtra(Intent.EXTRA_SUBJECT, "GenGhealth Support Request")
-                        }
-                        supportContext.startActivity(intent)
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = { showLogoutDialog = true },
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.error)
+            // Stats Section
+            item {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Icon(Icons.Default.ExitToApp, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Log Out", fontWeight = FontWeight.Bold)
+                    StatCard(
+                        title = "Lifetime Earned",
+                        value = "$totalEarned",
+                        icon = Icons.Default.Star,
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    )
+                    StatCard(
+                        title = "Current Balance",
+                        value = "$currentBalance",
+                        icon = Icons.Default.CheckCircle,
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.secondaryContainer
+                    )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(32.dp))
-                BannerAdView(modifier = Modifier.padding(bottom = 16.dp))
+            // Action Menu
+            item {
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        text = "Account Actions",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    
+                    ActionItem(
+                        title = "Transaction History",
+                        subtitle = "View all your past redemptions",
+                        icon = Icons.Default.List,
+                        onClick = { navController.navigate(Screen.Points.route) }
+                    )
+
+                    ActionItem(
+                        title = "My Referrals",
+                        subtitle = "Refer friends & earn 500 points",
+                        icon = Icons.Default.Face,
+                        onClick = { navController.navigate(Screen.Referrals.route) }
+                    )
+                    
+                    ActionItem(
+                        title = "Privacy Policy",
+                        subtitle = "How we protect your data",
+                        icon = Icons.Default.Info,
+                        onClick = { isPrivacyExpanded = !isPrivacyExpanded },
+                        trailingIcon = if (isPrivacyExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
+                    )
+
+                    AnimatedVisibility(visible = isPrivacyExpanded) {
+                        PrivacyPolicySection()
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    val supportContext = LocalContext.current
+                    ActionItem(
+                        title = "Contact Support",
+                        subtitle = "Get help at quizedguy@gmail.com",
+                        icon = Icons.Default.Email,
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:quizedguy@gmail.com")
+                                putExtra(Intent.EXTRA_SUBJECT, "GenGhealth Support Request")
+                            }
+                            supportContext.startActivity(intent)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = { showLogoutDialog = true },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Icon(Icons.Default.ExitToApp, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Log Out", fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
+        
+        BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
     }
 
     if (showLogoutDialog) {

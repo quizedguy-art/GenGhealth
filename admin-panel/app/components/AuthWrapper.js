@@ -47,6 +47,12 @@ export default function AuthWrapper({ children }) {
     await signOut(auth);
   };
 
+  // Public routes — skip auth entirely
+  const publicRoutes = ['/privacy'];
+  if (publicRoutes.includes(pathname)) {
+    return <>{children}</>;
+  }
+
   if (authLoading) {
     return <div className="loading-state" style={{ textAlign: 'center', padding: '5rem', color: '#64748b' }}>Authenticating...</div>;
   }
