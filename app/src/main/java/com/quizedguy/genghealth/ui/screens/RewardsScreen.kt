@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizedguy.genghealth.ui.viewmodel.PointsViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.quizedguy.genghealth.ui.components.BannerAdView
 import androidx.navigation.NavController
 import com.quizedguy.genghealth.ui.navigation.Screen
 import androidx.compose.ui.platform.LocalContext
@@ -135,8 +134,6 @@ fun RewardsScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
-        
-        BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
     }
 }
 

@@ -43,6 +43,11 @@ class AppOpenAdManager(private val myApplication: GengHealthApplication) :
 
     /** Request an ad. */
     fun fetchAd() {
+        if (AgeSignalsHelper.isMinor.value) {
+            Log.d(TAG, "Blocking App Open ad fetch: User is a minor.")
+            appOpenAd = null
+            return
+        }
         // Have unused ad, no need to fetch another.
         if (isLoadingAd || isAdAvailable()) {
             return
@@ -97,6 +102,11 @@ class AppOpenAdManager(private val myApplication: GengHealthApplication) :
 
     /** Show the ad if one is available or has been loaded. */
     private fun showAdIfAvailable(activity: Activity) {
+        if (AgeSignalsHelper.isMinor.value) {
+            Log.d(TAG, "Blocking App Open ad show: User is a minor.")
+            appOpenAd = null
+            return
+        }
         // If the app open ad is already showing, do not show the ad again.
         if (isShowingAd) {
             Log.d(TAG, "The app open ad is already showing.")

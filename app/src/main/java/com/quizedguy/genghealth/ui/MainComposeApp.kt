@@ -19,9 +19,11 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.ui.text.font.FontWeight
 import com.quizedguy.genghealth.util.RewardedAdManager
 import com.quizedguy.genghealth.util.RewardedInterstitialAdManager
+import com.quizedguy.genghealth.util.AgeSignalsHelper
 import android.app.Activity
 import android.Manifest
 import android.content.Intent
+import android.widget.Toast
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,6 +43,8 @@ fun MainComposeApp() {
     val context = LocalContext.current
     
     val isAdLoaded by RewardedAdManager.isAdLoaded.collectAsState()
+    val isMinor by AgeSignalsHelper.isMinor.collectAsState()
+    var isAdLoading by remember { mutableStateOf(false) }
     
     var showCompatibilityAlert by remember { 
         mutableStateOf(!CompatibilityUtils.isGooglePlayServicesAvailable(context)) 
@@ -89,10 +93,6 @@ fun MainComposeApp() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
                 launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
-            if (context is Activity) {
-                RewardedAdManager.loadAd(context)
-                RewardedInterstitialAdManager.loadAd(context)
-            }
         }
     }
     
@@ -108,6 +108,15 @@ fun MainComposeApp() {
                     Text("I Understand")
                 }
             }
+        )
+    }
+
+    if (isAdLoading) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Preparing Video Ad") },
+            text = { Text("Loading ad... Please wait a moment.") },
+            confirmButton = {}
         )
     }
 
@@ -172,12 +181,26 @@ fun MainComposeApp() {
                 }
             },
             floatingActionButton = {
-                if (isAdLoaded) {
+                if (!isMinor) {
                     ExtendedFloatingActionButton(
                         onClick = {
                             if (context is Activity) {
-                                RewardedAdManager.showAd(context) {
-                                    // Reward claimed
+                                if (RewardedAdManager.isAdAvailable()) {
+                                    RewardedAdManager.showAd(context) {
+                                        // Reward claimed
+                                    }
+                                } else {
+                                    isAdLoading = true
+                                    RewardedAdManager.loadAdOnDemand(context) { success ->
+                                        isAdLoading = false
+                                        if (success) {
+                                            RewardedAdManager.showAd(context) {
+                                                // Reward claimed
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "No ads available right now. Please try again later.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                 }
                             }
                         },

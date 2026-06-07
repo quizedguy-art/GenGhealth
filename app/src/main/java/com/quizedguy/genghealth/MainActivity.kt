@@ -14,10 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.quizedguy.genghealth.ui.MainComposeApp
 import com.quizedguy.genghealth.ui.theme.Geng_healthTheme
 import com.google.android.gms.ads.MobileAds
+import com.quizedguy.genghealth.util.AgeSignalsHelper
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Query age signals for regional compliance (e.g. Texas SB 2420)
+        AgeSignalsHelper.checkAge(this)
         
         enableEdgeToEdge()
         setContent {

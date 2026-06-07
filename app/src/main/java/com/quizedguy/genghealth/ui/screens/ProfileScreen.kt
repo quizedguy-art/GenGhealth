@@ -27,7 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import com.quizedguy.genghealth.ui.navigation.Screen
 import com.quizedguy.genghealth.ui.viewmodel.AuthViewModel
 import com.quizedguy.genghealth.ui.viewmodel.PointsViewModel
-import com.quizedguy.genghealth.ui.components.BannerAdView
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
@@ -151,8 +150,6 @@ fun ProfileScreen(
                 }
             }
         }
-        
-        BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
     }
 
     if (showLogoutDialog) {

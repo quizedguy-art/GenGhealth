@@ -42,6 +42,8 @@ object RewardedAdManager {
     private val _isAdLoaded = MutableStateFlow(false)
     val isAdLoaded: StateFlow<Boolean> = _isAdLoaded
     
+    private var onAdLoadedCallback: ((Boolean) -> Unit)? = null
+    
     /**
      * Checks if a loaded ad is still valid (Ads typically expire after 4 hours).
      */
@@ -57,7 +59,19 @@ object RewardedAdManager {
      * Loads a rewarded ad.
      */
     fun loadAd(context: Context) {
-        if (isLoading || isAdAvailable()) return
+        if (AgeSignalsHelper.isMinor.value) {
+            Log.d(TAG, "Blocking ad load: User is a minor according to Play Age Signals API.")
+            rewardedAd = null
+            _isAdLoaded.value = false
+            onAdLoadedCallback?.invoke(false)
+            onAdLoadedCallback = null
+            return
+        }
+        if (isLoading || isAdAvailable()) {
+            onAdLoadedCallback?.invoke(isAdAvailable())
+            onAdLoadedCallback = null
+            return
+        }
         
         isLoading = true
         Log.d(TAG, "Loading rewarded ad (Attempt: ${retryAttempt + 1})...")
@@ -74,14 +88,8 @@ object RewardedAdManager {
                 isLoading = false
                 _isAdLoaded.value = false
                 
-                // Exponential backoff retry (up to 64 seconds)
-                val delayMillis = Math.min(Math.pow(2.0, retryAttempt.toDouble()).toLong() * 1000, 64000L)
-                retryAttempt++
-                
-                Handler(Looper.getMainLooper()).postDelayed({
-                    Log.d(TAG, "Retrying ad load after ${delayMillis/1000}s...")
-                    loadAd(context)
-                }, delayMillis)
+                onAdLoadedCallback?.invoke(false)
+                onAdLoadedCallback = null
             }
  
             override fun onAdLoaded(ad: RewardedAd) {
@@ -91,6 +99,9 @@ object RewardedAdManager {
                 loadTime = System.currentTimeMillis()
                 retryAttempt = 0
                 _isAdLoaded.value = true
+                
+                onAdLoadedCallback?.invoke(true)
+                onAdLoadedCallback = null
                 
                 rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
@@ -115,6 +126,10 @@ object RewardedAdManager {
      * Shows the rewarded ad if it's available.
      */
     fun showAd(activity: Activity, onRewardEarned: () -> Unit) {
+        if (AgeSignalsHelper.isMinor.value) {
+            Log.w(TAG, "Blocking ad show: User is a minor.")
+            return
+        }
         if (isAdAvailable()) {
             rewardedAd?.show(activity) { rewardItem ->
                 Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
@@ -126,6 +141,18 @@ object RewardedAdManager {
             rewardedAd = null
             loadAd(activity)
         }
+    }
+
+    /**
+     * Loads a rewarded ad on demand and calls the callback when done.
+     */
+    fun loadAdOnDemand(context: Context, callback: (Boolean) -> Unit) {
+        if (isAdAvailable()) {
+            callback(true)
+            return
+        }
+        onAdLoadedCallback = callback
+        loadAd(context)
     }
 
     /**

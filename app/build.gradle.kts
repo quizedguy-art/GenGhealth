@@ -16,8 +16,8 @@ android {
         applicationId = "com.quizedguy.genghealth"
         minSdk = 24
         targetSdk = 36
-        versionCode = 21
-        versionName = "1.19"
+        versionCode = 23
+        versionName = "1.21"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -56,6 +56,12 @@ android {
 }
 
 dependencies {
+    constraints {
+        implementation(libs.androidx.fragment) {
+            because("Transitive dependency fragment:1.1.0 is flagged as outdated by Google Play Console")
+        }
+    }
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.process)
@@ -85,6 +91,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.ads)
     implementation(libs.play.services.base)
+    implementation(libs.play.age.signals)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

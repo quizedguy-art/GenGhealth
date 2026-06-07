@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.quizedguy.genghealth.ui.viewmodel.PointsViewModel
-import com.quizedguy.genghealth.ui.components.BannerAdView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,8 +104,6 @@ fun MyRewardsHistoryScreen(
                     }
                 }
             }
-            
-            BannerAdView(modifier = Modifier.padding(bottom = 8.dp))
         }
     }
 }
