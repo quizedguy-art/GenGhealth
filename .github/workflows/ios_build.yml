@@ -26,6 +26,14 @@ jobs:
       - name: Build Shared iOS Framework
         run: ./gradlew :shared:assembleXCFramework
 
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: |
+          cd iosApp
+          xcodegen generate
+
       - name: Build iOS App
         run: |
           cd iosApp
