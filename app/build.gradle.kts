@@ -16,10 +16,10 @@ android {
         applicationId = "com.quizedguy.genghealth"
         minSdk = 24
         targetSdk = 36
-        versionCode = 23
-        versionName = "1.21"
-
+        versionCode = 27
+        versionName = "1.25"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -79,10 +79,7 @@ dependencies {
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
     
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+
     
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -92,6 +89,21 @@ dependencies {
     implementation(libs.play.services.ads)
     implementation(libs.play.services.base)
     implementation(libs.play.age.signals)
+    
+    // AdMob Mediation Adapters and Support Libraries
+    implementation(libs.play.services.ads.mediation.inmobi)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.play.services.ads.mediation.meta)
+    implementation(libs.unity.ads)
+    implementation(libs.play.services.ads.mediation.unity)
+    implementation(libs.play.services.ads.mediation.ironsource)
+    implementation(libs.play.services.ads.mediation.vungle)
+    implementation(libs.user.messaging.platform)
+    implementation(libs.play.services.ads.mediation.chartboost)
+
+    implementation(libs.play.app.update)
+    implementation(libs.play.app.update.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -1,0 +1,302 @@
+package com.quizedguy.genghealth.shared.ui
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.*
+import com.quizedguy.genghealth.shared.ui.navigation.Screen
+import com.quizedguy.genghealth.shared.ui.navigation.bottomNavItems
+import com.quizedguy.genghealth.shared.ui.screens.*
+import com.quizedguy.genghealth.shared.ui.viewmodel.AuthViewModel
+import com.quizedguy.genghealth.shared.util.CompatibilityUtils
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.ui.text.font.FontWeight
+import com.quizedguy.genghealth.shared.util.RewardedAdManager
+import com.quizedguy.genghealth.shared.util.RewardedInterstitialAdManager
+import com.quizedguy.genghealth.shared.util.AgeSignalsHelper
+import android.app.Activity
+import android.Manifest
+import android.content.Intent
+import android.widget.Toast
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import android.content.pm.PackageManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import com.quizedguy.genghealth.shared.ui.viewmodel.DashboardViewModel
+import com.quizedguy.genghealth.shared.ui.viewmodel.PointsViewModel
+
+@Composable
+fun MainComposeApp() {
+    val authViewModel: AuthViewModel = viewModel()
+    val currentUser by authViewModel.currentUser.collectAsState()
+    val isAdmin by authViewModel.isAdmin.collectAsState()
+    val context = LocalContext.current
+    
+    val isAdLoaded by RewardedAdManager.isAdLoaded.collectAsState()
+    val isMinor by AgeSignalsHelper.isMinor.collectAsState()
+    var isAdLoading by remember { mutableStateOf(false) }
+    
+    var showCompatibilityAlert by remember { 
+        mutableStateOf(!CompatibilityUtils.isGooglePlayServicesAvailable(context)) 
+    }
+    var showRewardedAdSuccessDialog by remember { mutableStateOf(false) }
+    var showSplashScreen by remember { mutableStateOf(true) }
+
+    val dashboardViewModel: DashboardViewModel = viewModel()
+    val hasUsagePermission by dashboardViewModel.hasPermission.collectAsState()
+    
+    var hasNotificationPermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            } else true
+        )
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasNotificationPermission = isGranted
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                dashboardViewModel.checkPermission()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    hasNotificationPermission = ContextCompat.checkSelfPermission(
+                        context, 
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                }
+            } else if (event == Lifecycle.Event.ON_PAUSE) {
+                dashboardViewModel.stopTracking()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            dashboardViewModel.checkPermission()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
+                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+    
+    if (showCompatibilityAlert) {
+        AlertDialog(
+            onDismissRequest = { showCompatibilityAlert = false },
+            title = { Text("Device Compatibility") },
+            text = { 
+                Text("GenGhealth noticed that Google Play Services is missing. Features like Real-time Sync and Ads may be limited on this device.") 
+            },
+            confirmButton = {
+                Button(onClick = { showCompatibilityAlert = false }) {
+                    Text("I Understand")
+                }
+            }
+        )
+    }
+
+    if (isAdLoading) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Preparing Video Ad") },
+            text = { Text("Loading ad... Please wait a moment.") },
+            confirmButton = {}
+        )
+    }
+
+    if (showRewardedAdSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { showRewardedAdSuccessDialog = false },
+            title = { Text("Reward Earned! 🎉", fontWeight = FontWeight.Bold) },
+            text = { Text("you got 2 points for watching video") },
+            confirmButton = {
+                Button(onClick = { showRewardedAdSuccessDialog = false }) {
+                    Text("Awesome")
+                }
+            }
+        )
+    }
+
+    if (showSplashScreen) {
+        SplashScreen(
+            onTimeout = {
+                val app = context.applicationContext as? com.quizedguy.genghealth.GengHealthApplication
+                val activity = context as? Activity
+                if (app != null && activity != null && !isMinor) {
+                    app.appOpenAdManager.showAdIfAvailable(activity) {
+                        showSplashScreen = false
+                    }
+                } else {
+                    showSplashScreen = false
+                }
+            }
+        )
+    } else if (currentUser == null) {
+        LoginScreen(
+            authViewModel = authViewModel,
+            onLoginSuccess = { 
+                // AuthViewModel.currentUser will update and swap the UI
+            }
+        )
+    } else if (!hasUsagePermission || !hasNotificationPermission) {
+        PermissionRequiredScreen(
+            hasUsage = hasUsagePermission,
+            hasNotification = hasNotificationPermission,
+            onRequestUsage = { context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) },
+            onRequestNotification = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        )
+    } else {
+        val navController = rememberNavController()
+        val pointsViewModel: PointsViewModel = viewModel()
+        
+
+        // Show Rewarded Interstitial Ad when transitioning to the Rewards Screen
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+        LaunchedEffect(currentRoute) {
+            if (context is Activity && currentUser != null && currentRoute == Screen.Rewards.route) {
+                RewardedInterstitialAdManager.showAd(context, onRewardEarned = {
+                    showRewardedAdSuccessDialog = true
+                })
+            }
+        }
+
+        Scaffold(
+            bottomBar = {
+                val currentBottomItems = remember(isAdmin) {
+                    if (isAdmin) bottomNavItems + Screen.Admin else bottomNavItems
+                }
+                
+                NavigationBar {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
+                    
+                    currentBottomItems.forEach { screen ->
+                        NavigationBarItem(
+                            icon = { Icon(screen.icon, contentDescription = screen.title) },
+                            label = { Text(screen.title) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                }
+            },
+            floatingActionButton = {
+                if (!isMinor) {
+                    ExtendedFloatingActionButton(
+                        onClick = {
+                            if (context is Activity) {
+                                if (RewardedAdManager.isAdAvailable()) {
+                                    RewardedAdManager.showAd(context) {
+                                        showRewardedAdSuccessDialog = true
+                                    }
+                                } else {
+                                    isAdLoading = true
+                                    RewardedAdManager.loadAdOnDemand(context) { success ->
+                                        isAdLoading = false
+                                        if (success) {
+                                            RewardedAdManager.showAd(context) {
+                                                showRewardedAdSuccessDialog = true
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "No ads available right now. Please try again later.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        icon = { Icon(Icons.Filled.PlayArrow, contentDescription = null) },
+                        text = { Text("Watch") },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(Screen.Home.route) { 
+                    DashboardScreen(
+                        navController = navController,
+                        viewModel = dashboardViewModel,
+                        pointsViewModel = pointsViewModel
+                    ) 
+                }
+                composable(Screen.ScreenTime.route) { ScreenTimeScreen() }
+                composable(Screen.Rewards.route) { 
+                    RewardsScreen(
+                        navController = navController,
+                        pointsViewModel = pointsViewModel
+                    ) 
+                }
+                composable(Screen.Points.route) { 
+                    PointsScreen(
+                        viewModel = pointsViewModel
+                    ) 
+                }
+                composable(Screen.Collection.route) { 
+                    PointCollectionScreen(
+                        navController = navController,
+                        pointsViewModel = pointsViewModel
+                    ) 
+                }
+                composable(Screen.Profile.route) { 
+                    ProfileScreen(
+                        navController = navController,
+                        authViewModel = authViewModel,
+                        pointsViewModel = pointsViewModel
+                    ) 
+                }
+                composable(Screen.Admin.route) { 
+                    AdminDashboardScreen(
+                        navController = navController,
+                        authViewModel = authViewModel
+                    ) 
+                }
+                composable(Screen.Referrals.route) {
+                    ReferralScreen(
+                        navController = navController,
+                        authViewModel = authViewModel
+                    )
+                }
+                composable(Screen.MyRewardsHistory.route) { MyRewardsHistoryScreen(navController = navController) }
+            }
+        }
+    }
+}

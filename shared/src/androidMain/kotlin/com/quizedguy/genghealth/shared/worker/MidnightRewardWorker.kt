@@ -1,0 +1,134 @@
+package com.quizedguy.genghealth.shared.worker
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import androidx.core.app.NotificationCompat
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import com.quizedguy.genghealth.R
+import com.quizedguy.genghealth.shared.data.UsageStatsHelper
+import java.time.LocalDate
+import java.time.ZoneId
+
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
+
+import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.tasks.await
+import android.util.Log
+
+class MidnightRewardWorker(
+    appContext: Context,
+    workerParams: WorkerParameters
+) : CoroutineWorker(appContext, workerParams) {
+
+    override suspend fun doWork(): Result {
+        val today = LocalDate.now().toString() // e.g., "2026-03-31"
+        val auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser?.uid ?: return Result.success()
+        val db = FirebaseFirestore.getInstance()
+
+        try {
+            // Continue even if it ran before, to ensure we get final data
+            val userDoc = db.collection("users").document(userId).get().await()
+            val lastRewardDate = userDoc.getString("lastRewardDate")
+
+            // 2. Calculate today's usage and points
+            val totalMillis = UsageStatsHelper.getTodayTotalScreenTime(applicationContext)
+            val pointsPotential = calculatePoints(totalMillis)
+
+            val docId = "${userId}_$today"
+            val usageRef = db.collection("daily_usage").document(docId)
+            val usageSnapshot = usageRef.get().await()
+            
+            if (usageSnapshot.exists()) {
+                // If document already exists, only update usage data
+                val isCollected = usageSnapshot.getBoolean("isCollected") ?: false
+                
+                if (!isCollected) {
+                    usageRef.update(
+                        "totalMillis", totalMillis,
+                        "pointsPotential", pointsPotential
+                    ).await()
+                } else {
+                    // If already collected, only update millis
+                    usageRef.update("totalMillis", totalMillis).await()
+                }
+            } else {
+                // Create new record
+                val record = hashMapOf(
+                    "userId" to userId,
+                    "date" to today,
+                    "totalMillis" to totalMillis,
+                    "pointsPotential" to pointsPotential,
+                    "isCollected" to false,
+                    "isApproved" to false
+                )
+                usageRef.set(record).await()
+            }
+            
+            // Mark lastRewardDate in user doc to avoid daily worker duplication
+            db.collection("users").document(userId)
+                .update("lastRewardDate", today)
+                .await()
+
+            // Only send notification if it's the first time today
+            if (pointsPotential > 0 && lastRewardDate != today) {
+                Log.d("MidnightReward", "Successfully created record for $pointsPotential potential points for $today.")
+                sendNotification()
+            } else {
+                Log.d("MidnightReward", "Points potential today ($today) updated.")
+            }
+
+        } catch (e: Exception) {
+            Log.e("MidnightReward", "Error awarding points: ${e.message}")
+            return Result.retry() // Retry if transient error
+        }
+
+        return Result.success()
+    }
+
+    private fun calculatePoints(millis: Long): Int {
+        val hours = millis / 3600000.0
+        return when {
+            hours < 5 -> 200
+            hours < 6 -> 100
+            hours < 7 -> 50
+            else -> 0
+        }
+    }
+    private fun sendNotification() {
+        val channelId = "reward_channel"
+        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, "Rewards", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val intent = Intent(applicationContext, com.quizedguy.genghealth.MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(applicationContext, channelId)
+            .setContentTitle("Usage Recorded!")
+            .setContentText("Today's usage has been recorded. Admin will credit your points soon!")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(1, notification)
+    }
+}

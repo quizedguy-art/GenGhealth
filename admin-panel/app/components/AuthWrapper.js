@@ -104,7 +104,7 @@ export default function AuthWrapper({ children }) {
         
         <nav style={{ display: 'flex', flexDirection: 'column', padding: '0 1rem', gap: '0.5rem' }}>
           {[
-            { name: 'Overview', path: '/' },
+            { name: 'Overview', path: '/admin' },
             { name: 'Daily Usage', path: '/usage' },
             { name: 'Pending Requests', path: '/requests' },
             { name: 'Reward History', path: '/history' }

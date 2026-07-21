@@ -32,23 +32,16 @@ export default function UsageReviewPage() {
       if (isNaN(points)) return alert("Invalid points value");
 
       try {
-        const userRef = doc(db, "users", record.userId);
-        const userSnap = await getDoc(userRef);
-        const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
-        
-        await updateDoc(userRef, {
-          points: currentPoints + points
-        });
-
         const usageRef = doc(db, "daily_usage", record.id);
         await updateDoc(usageRef, {
-          isCollected: true,
+          isApproved: true,
+          isCollected: false,
           pointsPotential: points // Store the actual points credited
         });
 
-        alert(`Successfully credited ${points} points to user.`);
+        alert(`Successfully approved/credited ${points} points. The user can now collect them in the app.`);
       } catch (error) {
-        alert("Error crediting points: " + error.message);
+        alert("Error approving points: " + error.message);
       }
     }
   };
@@ -100,12 +93,12 @@ export default function UsageReviewPage() {
                     <td style={{ fontWeight: 'bold', color: r.totalMillis > 7 * 3600000 ? '#ef4444' : '#10b981' }}>{formatUsage(r.totalMillis)}</td>
                     <td>{r.pointsPotential} pts</td>
                     <td>
-                      <span className={`badge-${r.isCollected ? 'approved' : 'pending'}`}>
-                        {r.isCollected ? 'Credited' : 'Pending Review'}
+                      <span className={`badge-${r.isCollected ? 'approved' : r.isApproved ? 'credited' : 'pending'}`}>
+                        {r.isCollected ? 'Collected ✅' : r.isApproved ? 'Approved (Awaiting Collection)' : 'Pending Review'}
                       </span>
                     </td>
                     <td>
-                      {!r.isCollected ? (
+                      {!r.isApproved ? (
                         r.date === todayStr ? (
                           <span style={{ fontSize: '0.8rem', color: '#f59e0b', fontWeight: 'bold' }}>Tracking in Progress</span>
                         ) : (
@@ -117,7 +110,11 @@ export default function UsageReviewPage() {
                           </button>
                         )
                       ) : (
-                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Credited ✅</span>
+                        r.isCollected ? (
+                          <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 'bold' }}>Collected ✅</span>
+                        ) : (
+                          <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 'bold' }}>Awaiting Collection ⏳</span>
+                        )
                       )}
                     </td>
                   </tr>

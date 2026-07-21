@@ -163,3 +163,13 @@ tr:last-child td {
   font-weight: 800;
   text-transform: uppercase;
 }
+
+.badge-credited {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 0.35rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}

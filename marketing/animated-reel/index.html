@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenGhealth Reel - 15s HD (9:16)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="banner-container">
+        <!-- Background Decor -->
+        <div class="bg-blobs">
+            <div class="blob" id="blob-1"></div>
+            <div class="blob" id="blob-2"></div>
+            <div class="blob" id="blob-3"></div>
+        </div>
+
+        <!-- Scene 1: Hook / Intro (0-3s) -->
+        <div class="scene" id="scene-intro">
+            <div class="scene-content">
+                <div class="floating-cash-container">
+                    <div class="floating-cash float-1">💵</div>
+                    <div class="floating-cash float-2">⏳</div>
+                    <div class="floating-cash float-3">💰</div>
+                    <div class="floating-cash float-4">💵</div>
+                </div>
+                <div class="logo-wrapper">
+                    <span class="logo-text">GenG<span>health</span></span>
+                </div>
+                <h1 class="hook-title">I Love <span class="highlight">GenGhealth!</span></h1>
+                <p class="hook-subtitle">It actually <span class="accent-text">pays me</span> to step away from the screen...</p>
+                <div class="phone-mockup-wrapper">
+                    <img src="../animated-banner/assets/hero_app_mockup.png" alt="App Mockup" class="app-mockup">
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 2: Feature 1 - Usage Analytics (3-6s) -->
+        <div class="scene" id="scene-analytics">
+            <div class="scene-content">
+                <div class="section-tag">STEP AWAY</div>
+                <h2 class="scene-title">🚶‍♀️ ...And Go For A Walk!</h2>
+                <p class="scene-desc">Track your steps and build healthy habits.</p>
+                
+                <div class="chart-card glass">
+                    <div class="chart-header">
+                        <span>Daily Limit</span>
+                        <span class="limit-status">Near Limit</span>
+                    </div>
+                    <div class="chart-bars">
+                        <div class="bar-col">
+                            <div class="bar" style="height: 60%;"></div>
+                            <span class="day">M</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="height: 80%;"></div>
+                            <span class="day">T</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar active" style="height: 95%;"></div>
+                            <span class="day">W</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="height: 40%;"></div>
+                            <span class="day">T</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="height: 50%;"></div>
+                            <span class="day">F</span>
+                        </div>
+                    </div>
+                    <div class="chart-footer">
+                        <span class="time-saved">Saved 2h 15m today</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 3: Feature 2 - Points Engine (6-9s) -->
+        <div class="scene" id="scene-points">
+            <div class="scene-content">
+                <div class="section-tag">EARNINGS</div>
+                <h2 class="scene-title">💰 Earned $15 Today!</h2>
+                <p class="scene-desc">Get paid real cash for saving your health.</p>
+                
+                <div class="progress-card glass">
+                    <div class="progress-ring-container">
+                        <svg class="progress-ring" width="200" height="200">
+                            <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" r="85" cx="100" cy="100" />
+                            <circle class="progress-ring-bar" stroke="var(--primary)" stroke-width="12" stroke-dasharray="534" stroke-dashoffset="534" fill="transparent" r="85" cx="100" cy="100" />
+                        </svg>
+                        <div class="progress-text-overlay">
+                            <span class="pts-number" id="pts-counter">0</span>
+                            <span class="pts-label">POINTS</span>
+                        </div>
+                    </div>
+                    <div class="pts-status">Daily Goal Accomplished!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 4: Feature 3 - Rewards (9-12s) -->
+        <div class="scene" id="scene-rewards">
+            <div class="scene-content">
+                <div class="section-tag">REWARDS</div>
+                <h2 class="scene-title">🎁 Cash Out Instantly</h2>
+                <p class="scene-desc">Redeem points for premium gift cards and cash.</p>
+                
+                <div class="rewards-deck">
+                    <img src="../animated-banner/assets/rewards_card_mockup.png" alt="Rewards Mockup" class="rewards-mockup">
+                    <div class="rewards-tags">
+                        <div class="reward-tag-item amazon">Amazon</div>
+                        <div class="reward-tag-item playstore">Google Play</div>
+                        <div class="reward-tag-item appstore">App Store</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 5: Outro & Call to Action (12-15s) -->
+        <div class="scene" id="scene-outro">
+            <div class="scene-content">
+                <div class="logo-wrapper large">
+                    <span class="logo-text">GenG<span>health</span></span>
+                </div>
+                <h2 class="outro-slogan">Get Healthy.<br><span class="highlight">Get Paid.</span></h2>
+                
+                <div class="mockup-outro-container">
+                    <img src="../animated-banner/assets/hero_app_mockup.png" alt="App Mockup" class="app-mockup-outro">
+                </div>
+
+                <div class="cta-btn-wrapper">
+                    <a href="https://play.google.com/store/apps/details?id=com.quizedguy.genghealth" target="_blank" class="download-button">DOWNLOAD NOW</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>

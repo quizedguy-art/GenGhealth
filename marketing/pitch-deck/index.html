@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenGhealth Pitch Deck | Healthy Screen Habits, Real Rewards</title>
+    <meta name="description" content="Pitch deck presentation for GenGhealth - Gamified Digital Wellness app.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.395.0/dist/umd/lucide.min.js" defer></script>
+</head>
+<body>
+
+    <!-- Slide Deck Container -->
+    <div class="deck-container">
+        
+        <!-- Animated Background Effects -->
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+        <div class="bg-glow bg-glow-3"></div>
+
+        <!-- Header / Logo & Navigation Status -->
+        <header class="deck-header">
+            <a href="#" class="logo">GenG<span>health</span></a>
+            <div class="deck-status">
+                <span class="slide-title-indicator">Cover</span>
+                <span class="slide-counter"><span id="current-slide-num">1</span> / <span id="total-slides-num">10</span></span>
+            </div>
+        </header>
+
+        <!-- Slide Wrapper -->
+        <main class="slides-wrapper">
+
+            <!-- SLIDE 1: COVER -->
+            <section class="slide active" id="slide-1" data-title="Introduction">
+                <div class="slide-grid grid-2-1">
+                    <div class="slide-content flex-center-left">
+                        <div class="tag">Pitch Presentation</div>
+                        <h1 class="hero-text">Healthy Screen Habits, <span class="gradient-text">Real Rewards.</span></h1>
+                        <p class="subtitle">Gamifying digital wellness for the next generation. We turn screen limit-setting from a chore into a rewarding routine.</p>
+                        <div class="slide-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Prepared For</span>
+                                <span class="meta-val">Seed Capital Event</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Project Stage</span>
+                                <span class="meta-val">Release Ready App</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-visual flex-center">
+                        <div class="mockup-container">
+                            <img src="../../docs/assets/hero_app_mockup.png" alt="GenGhealth App Mockup" class="floating-mockup">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: THE PROBLEM -->
+            <section class="slide" id="slide-2" data-title="The Problem">
+                <div class="slide-grid grid-1-1">
+                    <div class="slide-content">
+                        <div class="tag tag-danger">The Problem</div>
+                        <h2>The Screen Time <span class="gradient-text-warn">Crisis</span></h2>
+                        <p class="subtitle">Smartphone addiction is at an all-time high, severely impacting mental health, sleep, and productivity.</p>
+                        
+                        <div class="problem-cards">
+                            <div class="problem-card">
+                                <div class="icon-wrap"><i data-lucide="clock"></i></div>
+                                <h4>7.2 Hours</h4>
+                                <p>Average daily screen time of Gen Z, leading to decreased attention spans and cognitive fatigue.</p>
+                            </div>
+                            <div class="problem-card">
+                                <div class="icon-wrap"><i data-lucide="brain-circuit"></i></div>
+                                <h4>Mental Strain</h4>
+                                <p>Rising screen habits correlate directly with anxiety, digital burnout, and sleep disorders.</p>
+                            </div>
+                            <div class="problem-card">
+                                <div class="icon-wrap"><i data-lucide="frown"></i></div>
+                                <h4>Inert Solutions</h4>
+                                <p>Existing trackers (iOS/Android) are passive, dry, and easily bypassed without positive reinforcement.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: THE SOLUTION -->
+            <section class="slide" id="slide-3" data-title="The Solution">
+                <div class="slide-grid grid-2-1">
+                    <div class="slide-content">
+                        <div class="tag tag-success">The Solution</div>
+                        <h2>GenGhealth: <span class="gradient-text">Incentivized Focus</span></h2>
+                        <p class="subtitle">We transform digital restraint into a gamified reward loop, giving users a tangible reason to lock their screens.</p>
+                        
+                        <ul class="solution-list">
+                            <li>
+                                <div class="solution-num">01</div>
+                                <div>
+                                    <h4>Active Tracking & Analysis</h4>
+                                    <p>Passive tracking monitors application categories and visualizes usage cleanly.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="solution-num">02</div>
+                                <div>
+                                    <h4>The Gamified Points Engine</h4>
+                                    <p>Users receive points hourly for maintaining usage below customized, healthy limits.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="solution-num">03</div>
+                                <div>
+                                    <h4>Real Tangible Rewards</h4>
+                                    <p>Points convert instantly into gift cards (Amazon, Google Play, etc.) within the app.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="slide-visual flex-center">
+                        <div class="card glass-card solution-preview-card">
+                            <div class="preview-header">
+                                <span class="badge">Reward Tier</span>
+                                <span class="points-glow">+500 Points</span>
+                            </div>
+                            <h3>Daily Goal Completed!</h3>
+                            <p>You stayed under your 2-hour social media cap today. Keep it up tomorrow to build a streak!</p>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: 85%;"></div>
+                            </div>
+                            <div class="preview-footer">
+                                <span>Streak: 5 Days</span>
+                                <span>Level 3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: HOW IT WORKS -->
+            <section class="slide" id="slide-4" data-title="How It Works">
+                <div class="slide-content text-center">
+                    <div class="tag">Product Flow</div>
+                    <h2>How It Works</h2>
+                    <p class="subtitle max-width-600">A seamless, three-step user experience designed for immediate engagement.</p>
+                    
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-index">1</div>
+                            <div class="step-icon"><i data-lucide="download-cloud"></i></div>
+                            <h4>Install & Grant Access</h4>
+                            <p>Download the native Android app and securely grant local usage access permission.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-index">2</div>
+                            <div class="step-icon"><i data-lucide="shield-check"></i></div>
+                            <h4>Set Limits & Keep Goals</h4>
+                            <p>Set custom daily caps. The points engine tracks adherence and rewards consistency.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-index">3</div>
+                            <div class="step-icon"><i data-lucide="gift"></i></div>
+                            <h4>Redeem Partner Rewards</h4>
+                            <p>Cash in points for digital vouchers from major partner brands directly in the app.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: PRODUCT ARCHITECTURE -->
+            <section class="slide" id="slide-5" data-title="Product Architecture">
+                <div class="slide-grid grid-1-1">
+                    <div class="slide-content">
+                        <div class="tag">Technology</div>
+                        <h2>Engineered for <span class="gradient-text">Performance & Security</span></h2>
+                        <p class="subtitle">Built on a secure, light, and optimized native architecture that guarantees zero battery drain and robust anti-cheating protection.</p>
+                        
+                        <div class="tech-grid">
+                            <div class="tech-card">
+                                <span class="tech-icon"><i data-lucide="terminal"></i></span>
+                                <div>
+                                    <h4>Native Kotlin & Jetpack Compose</h4>
+                                    <p>Guarantees smooth performance, responsive rendering, and deep system-level integration.</p>
+                                </div>
+                            </div>
+                            <div class="tech-card">
+                                <span class="tech-icon"><i data-lucide="server"></i></span>
+                                <div>
+                                    <h4>Firebase Firestore Backend</h4>
+                                    <p>Real-time, scalable data syncing, secure user authentication, and transaction logging.</p>
+                                </div>
+                            </div>
+                            <div class="tech-card">
+                                <span class="tech-icon"><i data-lucide="cpu"></i></span>
+                                <div>
+                                    <h4>MidnightRewardWorker</h4>
+                                    <p>Background worker processes daily metrics and securely distributes points at midnight.</p>
+                                </div>
+                            </div>
+                            <div class="tech-card">
+                                <span class="tech-icon"><i data-lucide="shield-alert"></i></span>
+                                <div>
+                                    <h4>Anti-Spoof Validation</h4>
+                                    <p>Client-side hashing and network-level double-checks protect reward verification from abuse.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: MARKET OPPORTUNITY -->
+            <section class="slide" id="slide-6" data-title="Market Opportunity">
+                <div class="slide-grid grid-2-1">
+                    <div class="slide-content">
+                        <div class="tag">Market Size</div>
+                        <h2>A Massive, <span class="gradient-text">Rapidly Growing</span> Sector</h2>
+                        <p class="subtitle">Digital wellness is transitioning from a niche category to a mainstream necessity.</p>
+                        
+                        <div class="market-bars">
+                            <div class="market-bar">
+                                <div class="market-info">
+                                    <span>TAM (Global Digital Health & Wellness)</span>
+                                    <strong>$300 Billion+</strong>
+                                </div>
+                                <div class="market-line"><div class="market-fill" style="width: 100%;"></div></div>
+                            </div>
+                            <div class="market-bar">
+                                <div class="market-info">
+                                    <span>SAM (Screen Time & Focus Tracker Market)</span>
+                                    <strong>$15 Billion+</strong>
+                                </div>
+                                <div class="market-line"><div class="market-fill" style="width: 60%;"></div></div>
+                            </div>
+                            <div class="market-bar">
+                                <div class="market-info">
+                                    <span>SOM (Gamified Wellness for Gen Z - Target)</span>
+                                    <strong>$1.2 Billion</strong>
+                                </div>
+                                <div class="market-line"><div class="market-fill" style="width: 25%;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-visual flex-center">
+                        <div class="card glass-card text-center highlight-metric-card">
+                            <div class="metric-num">18%</div>
+                            <div class="metric-label">CAGR of Digital Wellness Industry</div>
+                            <p class="metric-desc">Accelerated demand for wellness tech is driven by corporate and individual post-pandemic health initiatives.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: BUSINESS MODEL -->
+            <section class="slide" id="slide-7" data-title="Business Model">
+                <div class="slide-content">
+                    <div class="tag">Monetization</div>
+                    <h2 class="text-center">How We <span class="gradient-text">Generate Revenue</span></h2>
+                    <p class="subtitle text-center max-width-600">A sustainable model with multiple high-margin revenue streams that scale alongside user growth.</p>
+                    
+                    <div class="business-grid">
+                        <div class="biz-card">
+                            <div class="biz-icon"><i data-lucide="handshake"></i></div>
+                            <h4>Brand Partnerships</h4>
+                            <p>Partner brands sponsor specific goals or feature slots, driving customer acquisition directly to their gift cards.</p>
+                            <span class="biz-commission">10-15% commission per sale</span>
+                        </div>
+                        <div class="biz-card">
+                            <div class="biz-icon"><i data-lucide="play-circle"></i></div>
+                            <h4>Rewarded Video Ads</h4>
+                            <p>Integrated AppOpenAdManager triggers relevant, non-disruptive ads for point multipliers or boosters.</p>
+                            <span class="biz-commission">High eCPM Ad Revenue</span>
+                        </div>
+                        <div class="biz-card">
+                            <div class="biz-icon"><i data-lucide="zap"></i></div>
+                            <h4>Premium Subscriptions</h4>
+                            <p>Users unlock custom categories, advanced analytics, ad-free layouts, and premium reward catalogs.</p>
+                            <span class="biz-commission">Monthly recurring SaaS pricing</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: VIRAL GROWTH LOOP -->
+            <section class="slide" id="slide-8" data-title="Growth Strategy">
+                <div class="slide-grid grid-1-1">
+                    <div class="slide-content">
+                        <div class="tag">Go-To-Market</div>
+                        <h2>Double-Sided <span class="gradient-text">Viral Loop</span></h2>
+                        <p class="subtitle">By using native psychological incentives, we scale organically at a fraction of the usual user acquisition cost.</p>
+                        
+                        <div class="growth-timeline">
+                            <div class="growth-node">
+                                <div class="node-icon"><i data-lucide="users-2"></i></div>
+                                <div>
+                                    <h4>500-Point Referral Engine</h4>
+                                    <p>Both the sender and referee receive 500 bonus points instantly when a new account is verified.</p>
+                                </div>
+                            </div>
+                            <div class="growth-node">
+                                <div class="node-icon"><i data-lucide="share-2"></i></div>
+                                <div>
+                                    <h4>Social Flex Integrations</h4>
+                                    <p>Clean, visual "screen reduction" sharecards formatted perfectly for TikTok, Snapchat, and Instagram stories.</p>
+                                </div>
+                            </div>
+                            <div class="growth-node">
+                                <div class="node-icon"><i data-lucide="trophy"></i></div>
+                                <div>
+                                    <h4>Community Challenges</h4>
+                                    <p>School and workplace-level focus leagues that drive localized group signups organically.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: COMPETITION -->
+            <section class="slide" id="slide-9" data-title="Competition">
+                <div class="slide-content">
+                    <div class="tag">Market Context</div>
+                    <h2 class="text-center">Market <span class="gradient-text-warn">Landscape</span></h2>
+                    <p class="subtitle text-center max-width-600">How GenGhealth stacks up against passive OS trackers, general reward programs, and simple focus apps.</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th class="highlight-col">GenGhealth</th>
+                                    <th>Apple/Android Trackers</th>
+                                    <th>Sweatcoin/Mistplay</th>
+                                    <th>Forest/Flora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Real Gift Cards / Rewards</td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Screen Limit Incentives</td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Gamified Focus Loop</td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Double-Sided Referrals</td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                    <td class="check-col"><i data-lucide="check"></i></td>
+                                    <td class="cross-col"><i data-lucide="x"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 10: THE ASK -->
+            <section class="slide" id="slide-10" data-title="The Ask">
+                <div class="slide-grid grid-1-1">
+                    <div class="slide-content text-center">
+                        <div class="tag tag-success">The Opportunity</div>
+                        <h2>The Investment Ask: <span class="gradient-text">Rs. 1,00,000</span></h2>
+                        <p class="subtitle max-width-600">We are raising a seed grant to bootstrap initial user acquisition and reward capital, setting the foundation for viral growth.</p>
+                        
+                        <div class="ask-grid">
+                            <div class="ask-card">
+                                <div class="ask-num">50%</div>
+                                <h4>Marketing & GTM</h4>
+                                <p>Rs. 50,000 to launch micro-influencer campaigns and drive early referral invites.</p>
+                            </div>
+                            <div class="ask-card">
+                                <div class="ask-num">30%</div>
+                                <h4>Initial Reward Pool</h4>
+                                <p>Rs. 30,000 to pre-fund gift card inventories and ensure instant payouts for early adopters.</p>
+                            </div>
+                            <div class="ask-card">
+                                <div class="ask-num">20%</div>
+                                <h4>Ops & Backend</h4>
+                                <p>Rs. 20,000 for server hosting, Firebase database overhead, and testing resources.</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-box">
+                            <p>Let's build a healthier, more focused generation together.</p>
+                            <strong>info@genghealth.com</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Deck Controls Footer -->
+        <footer class="deck-controls">
+            <div class="controls-left">
+                <button id="btn-prev" class="control-btn" title="Previous Slide (Left Arrow)"><i data-lucide="arrow-left"></i></button>
+                <button id="btn-next" class="control-btn" title="Next Slide (Right Arrow/Space)"><i data-lucide="arrow-right"></i></button>
+            </div>
+            
+            <!-- Slide Indicators Dot Bar -->
+            <div class="slide-dots">
+                <!-- Injected via script.js -->
+            </div>
+            
+            <div class="controls-right">
+                <button id="btn-fullscreen" class="control-btn" title="Toggle Fullscreen"><i data-lucide="maximize"></i></button>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Script Execution -->
+    <script src="script.js" defer></script>
+</body>
+</html>

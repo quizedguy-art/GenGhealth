@@ -1,6 +1,6 @@
 [versions]
 agp = "8.13.2"
-kotlin = "2.0.21"
+kotlin = "2.0.20"
 coreKtx = "1.18.0"
 fragment = "1.8.9"
 junit = "4.13.2"
@@ -18,6 +18,19 @@ playServicesAds = "23.6.0"
 playServicesBase = "18.5.0"
 lifecycleProcess = "2.10.0"
 kotlinxCoroutinesPlayServices = "1.9.0"
+androidxBrowser = "1.8.0"
+media3Exoplayer = "1.4.1"
+inmobiMediation = "10.8.0.0"
+metaMediation = "6.21.0.0"
+unityAds = "4.13.0"
+unityMediation = "4.13.0.0"
+ironsourceMediation = "8.5.0.1"
+vungleMediation = "7.4.3.0"
+userMessagingPlatform = "3.1.0"
+chartboostMediation = "9.8.3.0"
+
+sqldelight = "2.0.2"
+jetbrainsLifecycle = "2.8.3"
 
 [libraries]
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
@@ -49,11 +62,33 @@ play-services-base = { group = "com.google.android.gms", name = "play-services-b
 play-age-signals = { group = "com.google.android.play", name = "age-signals", version = "0.0.3" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
+play-services-ads-mediation-inmobi = { group = "com.google.ads.mediation", name = "inmobi", version.ref = "inmobiMediation" }
+play-services-ads-mediation-meta = { group = "com.google.ads.mediation", name = "facebook", version.ref = "metaMediation" }
+unity-ads = { group = "com.unity3d.ads", name = "unity-ads", version.ref = "unityAds" }
+play-services-ads-mediation-unity = { group = "com.google.ads.mediation", name = "unity", version.ref = "unityMediation" }
+play-services-ads-mediation-ironsource = { group = "com.google.ads.mediation", name = "ironsource", version.ref = "ironsourceMediation" }
+play-services-ads-mediation-vungle = { group = "com.google.ads.mediation", name = "vungle", version.ref = "vungleMediation" }
+user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
+play-services-ads-mediation-chartboost = { group = "com.google.ads.mediation", name = "chartboost", version.ref = "chartboostMediation" }
+
+play-app-update = { group = "com.google.android.play", name = "app-update", version = "2.1.0" }
+play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version = "2.1.0" }
+
+sqldelight-android = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
+sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
+jetbrains-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrainsLifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version = "1.7.0" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
-kotlin-ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.26" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version = "2.0.20-1.0.24" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 

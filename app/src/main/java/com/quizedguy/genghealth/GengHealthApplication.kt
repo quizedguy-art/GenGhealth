@@ -15,7 +15,13 @@ import java.util.concurrent.TimeUnit
 
 class GengHealthApplication : Application() {
 
-    private lateinit var appOpenAdManager: AppOpenAdManager
+    companion object {
+        var isAdSdkInitialized = false
+            internal set
+    }
+
+    lateinit var appOpenAdManager: AppOpenAdManager
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -23,17 +29,32 @@ class GengHealthApplication : Application() {
         // Initialize the App Open Ad Manager.
         appOpenAdManager = AppOpenAdManager(this)
 
+        // Ads will be initialized from MainActivity after consent is gathered.
+        // But background workers can be scheduled immediately.
+        scheduleBackgroundWorkers()
+    }
+
+    fun initializeMobileAds() {
+        if (isAdSdkInitialized) return
+
         // Initialize the Google Mobile Ads SDK.
         MobileAds.initialize(this) { initializationStatus ->
+            isAdSdkInitialized = true
             Log.d("GengHealthApp", "Mobile Ads SDK initialized status: $initializationStatus")
+            initializationStatus.adapterStatusMap.forEach { (adapter, status) ->
+                Log.d("GengHealthApp", "Mediation Adapter: $adapter | State: ${status.initializationState} | Description: ${status.description}")
+            }
             
             // Initial ad fetches only after SDK is ready
             appOpenAdManager.fetchAd()
+            
+            // Preload Rewarded and Rewarded Interstitial Ads
+            RewardedAdManager.loadAd(this)
+            RewardedInterstitialAdManager.loadAd(this)
         }
-
-        // Schedule Workers
-        scheduleBackgroundWorkers()
     }
+
+
 
     private fun scheduleBackgroundWorkers() {
         val workManager = WorkManager.getInstance(this)

@@ -16,9 +16,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://android-sdk.is.com/") }
+        maven { url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/") }
     }
 }
 
 rootProject.name = "geng_health"
-include(":app")
- 
+include(":app", ":shared")

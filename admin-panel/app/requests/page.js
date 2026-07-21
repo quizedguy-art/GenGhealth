@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, onSnapshot, query, orderBy, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, doc, updateDoc, writeBatch, increment, getDoc } from 'firebase/firestore';
 
 export default function RequestsPage() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userEmails, setUserEmails] = useState({});
 
   useEffect(() => {
     const q = query(collection(db, "withdrawals"), orderBy("createdAt", "desc"));
@@ -16,7 +17,22 @@ export default function RequestsPage() {
         ...doc.data()
       }));
       // Filter only pending requests
-      setWithdrawals(docs.filter(w => w.status === 'Pending'));
+      const pendingDocs = docs.filter(w => w.status === 'Pending');
+      setWithdrawals(pendingDocs);
+      
+      // Fetch emails for unique users
+      const uniqueUserIds = [...new Set(pendingDocs.map(w => w.userId).filter(Boolean))];
+      uniqueUserIds.forEach(async (uid) => {
+        try {
+          const userSnap = await getDoc(doc(db, "users", uid));
+          if (userSnap.exists() && userSnap.data().email) {
+            setUserEmails(prev => ({...prev, [uid]: userSnap.data().email}));
+          }
+        } catch (e) {
+          console.error("Error fetching user email:", e);
+        }
+      });
+
       setLoading(false);
     }, (error) => {
       console.error("Firestore error:", error);
@@ -44,14 +60,33 @@ export default function RequestsPage() {
   };
 
   const handleReject = async (id) => {
+    const request = withdrawals.find(w => w.id === id);
+    if (!request) {
+      alert("Error: Withdrawal request not found.");
+      return;
+    }
+
     if (confirm("Are you sure you want to reject this withdrawal request?")) {
       try {
+        const batch = writeBatch(db);
+        
+        // 1. Update the withdrawal request status to 'Rejected'
         const docRef = doc(db, "withdrawals", id);
-        await updateDoc(docRef, {
+        batch.update(docRef, {
           status: 'Rejected',
           processedAt: Date.now()
         });
-        alert(`Success: Withdrawal request rejected`);
+
+        // 2. Refund the points to the user
+        if (request.userId && request.pointsDeducted) {
+          const userRef = doc(db, "users", request.userId);
+          batch.update(userRef, {
+            points: increment(request.pointsDeducted)
+          });
+        }
+
+        await batch.commit();
+        alert(`Success: Withdrawal request rejected and ${request.pointsDeducted} points returned to user.`);
       } catch (error) {
         alert("Error rejecting withdrawal: " + error.message);
       }
@@ -77,7 +112,7 @@ export default function RequestsPage() {
             <thead>
               <tr>
                 <th>Request Date</th>
-                <th>User ID</th>
+                <th>User / Email</th>
                 <th>Amount</th>
                 <th>Points Deducted</th>
                 <th>Action</th>
@@ -90,7 +125,14 @@ export default function RequestsPage() {
                 withdrawals.map(w => (
                   <tr key={w.id}>
                     <td>{formatDate(w.createdAt)}</td>
-                    <td><code style={{ fontSize: '0.8rem' }}>{w.userId}</code></td>
+                    <td>
+                      <code style={{ fontSize: '0.8rem' }}>{w.userId}</code>
+                      {userEmails[w.userId] && (
+                        <div style={{ fontSize: '0.85rem', color: '#3b82f6', marginTop: '0.2rem', wordBreak: 'break-all' }}>
+                          {userEmails[w.userId]}
+                        </div>
+                      )}
+                    </td>
                     <td style={{ fontWeight: 'bold' }}>${w.amountRs} {w.rewardName && <span style={{fontSize:'0.8rem', fontWeight:'normal'}}><br/>({w.rewardName})</span>}</td>
                     <td>{w.pointsDeducted} pts</td>
                     <td>
